@@ -23,7 +23,7 @@ public class DJExportWriter extends ExportPagedWriter {
 
     @Autowired
     private DJExportFormatFactory formatFactory;
-// [MISSING FROM SCREENSHOTS: lines 26-26 of the original file were not visible in the photos]
+
     public void generateAllDjFiles(DJFileExportData djRecordsExportData,
                                    List<GeneratedFileWriter> fileWriters,
                                    ExportJobParameters exportJobParameters) {
@@ -48,7 +48,7 @@ public class DJExportWriter extends ExportPagedWriter {
     private void writeXmlFiles(DJFileExportData djFileExportData, ExportJobParameters exportJobParameters,
                                List<GeneratedFileWriter> xmlFileWriters) {
         List<DJXmlExportFormatWriter> exportFormatWriters = formatFactory.createAllXmlFormats(xmlFileWriters);
-// [MISSING FROM SCREENSHOTS: lines 51-51 of the original file were not visible in the photos]
+
         for (DJXmlExportFormatWriter format : exportFormatWriters) {
             format.writeHeader(djFileExportData);
             format.startRecords();

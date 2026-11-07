@@ -31,7 +31,7 @@ public class WatchlistLogFormatWriter {
             throw new IllegalStateException("Cannot writeRecords Watchlist ZIP file: some Watchlist files failed");
         }
 
-        formatAndWrite(writer, "-------------------- DEBUT LOG REGLISS V4--------------------");
+        formatAndWrite(writer, "--------------------- DEBUT LOG REGLISS V4----------------------");
         formatAndWrite(writer, "Lancement du traitement");
 
         logSubscriberInfo(filter, listSubscriptions, writer);
@@ -94,7 +94,9 @@ public class WatchlistLogFormatWriter {
 
                 jurisdictionCountries = jurisdictionCountries + sf.getJurisdictionCountries().stream().map(country -> country.getLabel())
                         .collect(Collectors.joining(",")) + ",";
-// [MISSING FROM SCREENSHOTS: lines 97-99 of the original file were not visible in the photos]
+                pepOcupation = pepOcupation + sf.getPepOccupationCategories().stream().map(pepOcup -> pepOcup.getLabel())
+                        .collect(Collectors.joining(",")) + ",";
+                residenceCountries = residenceCountries + sf.getResidenceCountries().stream().map(country -> country.getLabel())
                         .collect(Collectors.joining(",")) + ",";
                 relationType = relationType + sf.getRelationTypes().stream().map(rt -> rt.getLabel())
                         .collect(Collectors.joining(",")) + ",";
