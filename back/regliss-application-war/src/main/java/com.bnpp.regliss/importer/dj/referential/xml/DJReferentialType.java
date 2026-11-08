@@ -1,0 +1,23 @@
+package com.bnpp.regliss.importer.dj.referential.xml;
+
+public enum DJReferentialType {
+    DATE_TYPE,
+    COUNTRY_TYPE,
+    PROGRAM_SANCTION_TYPE,
+    IDENTITY_DOCUMENT_TYPE,
+    GENDER,
+    RECORD_CATEGORY,
+    SANCTION_TYPE,
+    DESCRIPTION3,
+    COUNTRY,
+    TERRITORY,
+    RELATION_TYPE,
+    RECORD_TYPE,
+    PEP_OCCUPATION_CATEGORY,
+    LANGUAGE,
+    SANCTION_REFERENCE,
+    ALIAS_TYPE,
+    ALIAS_QUALITY;
+
+}
+
