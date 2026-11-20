@@ -1,24 +1,6 @@
 package com.bnpp.regliss.importer.manual;
 
-import com.bnpp.regliss.ReglissException;
-import com.bnpp.regliss.annotation.AuditedFieldCode;
-import com.bnpp.regliss.entity.ValidationError;
-import com.bnpp.regliss.entity.referential.ReferentialBusinessConcept;
-import com.bnpp.regliss.entity.referential.record.IdentityDocumentType;
-import com.bnpp.regliss.entity.referential.record.RecordType;
-import org.apache.commons.lang.StringUtils;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static java.time.format.DateTimeFormatter.ofPattern;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.joining;
+// [MISSING FROM SCREENSHOTS: lines 3-21 of the original file were not visible in the photos]
 
 public class FieldPatternValidator {
 
@@ -36,8 +18,7 @@ public class FieldPatternValidator {
         return false;
     }
 
-    public static List<ValidationError> validateAttributesPatterns(Function<AuditedFieldCode, String> fields,
-                                                                   Map<AuditedFieldCode,
+    public static List<ValidationError> validateAttributesPatterns(Function<AuditedFieldCode, String> fields, Map<AuditedFieldCode,
             Function<String, Object>> customFieldMappers) {
         List<ValidationError> errors = new ArrayList<>();
         if (invalidDate(fields.apply(AuditedFieldCode.RECORD_START_DATE))) {
@@ -48,8 +29,7 @@ public class FieldPatternValidator {
         return errors;
     }
 
-    private static List<ValidationError> validateNamesForPersonRecord(Function<AuditedFieldCode, String> fields,
-                                                                      Map<AuditedFieldCode,
+    private static List<ValidationError> validateNamesForPersonRecord(Function<AuditedFieldCode, String> fields, Map<AuditedFieldCode,
             Function<String, Object>> customFieldMappers) {
         List<ValidationError> errors = new ArrayList<>();
         String recordType = fields.apply(AuditedFieldCode.RECORD_TYPE);
@@ -94,30 +74,27 @@ public class FieldPatternValidator {
             }
         } else if (fields.apply(AuditedFieldCode.RECORD_NAME)==null &&
                 fields.apply(AuditedFieldCode.PERSON_LAST_NAME) != null) {
-            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_MISSING_NAME,
-                    AuditedFieldCode.RECORD_NAME.name()));
+            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_MISSING_NAME, AuditedFieldCode.RECORD_NAME.name()));
         }
         return errors;
     }
-
     public static List<ValidationError> validateIdentityDocumentPatterns(Function<AuditedFieldCode,
             String> childFields, Integer childIndex, Function<String, ?> identityDocumentTypeResolver) {
         List<ValidationError> errors = new ArrayList<>();
         String documentType = childFields.apply(AuditedFieldCode.RECORD_IDENTITY_DOCUMENT_TYPE);
         String documentNumber = childFields.apply(AuditedFieldCode.RECORD_IDENTITY_DOCUMENT_NUMBER);
 
-        if (documentType != null && documentNumber != null) {
+        if (documentType != null && documentNumber != null)  {
             IdentityDocumentType type = (IdentityDocumentType) identityDocumentTypeResolver.apply(documentType);
             if (type != null && type.hasBusinessConcept(ReferentialBusinessConcept.IDT_PASSPORT)
                     && documentNumber.trim().length() < 4) {
-                errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_PASSPORT_WITH_INVALID_NUMBER,
-                        childIndex));
+                    errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_PASSPORT_WITH_INVALID_NUMBER, childIndex));
             }
         }
         if(invalidDate(childFields.apply(AuditedFieldCode.RECORD_IDENTITY_DOCUMENT_ISSUING_DATE))){
             errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_INVALID_DOCUMENT_ISSUING_DATE_FORMAT,
                     childIndex, DATE_PATTERN));
-        }
+// [MISSING FROM SCREENSHOTS: lines 115-115 of the original file were not visible in the photos]
 
         if(invalidDate(childFields.apply(AuditedFieldCode.RECORD_IDENTITY_DOCUMENT_EXPIRATION_DATE))){
             errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_INVALID_DOCUMENT_EXPIRATION_DATE_FORMAT,
@@ -141,8 +118,7 @@ public class FieldPatternValidator {
         return errors;
     }
 
-    public static List<ValidationError> validateDateDetailsPattern(Function<AuditedFieldCode, String> childFields,
-                                                                   Integer childIndex) {
+    public static List<ValidationError> validateDateDetailsPattern(Function<AuditedFieldCode, String> childFields, Integer childIndex) {
         List<ValidationError> errors = new ArrayList<>();
         if(invalidDate(childFields.apply(AuditedFieldCode.RECORD_PERSON_BIOGRAPHY_DATE_VALUE))){
             errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_INVALID_DATE_DETAILS_VALUE_FORMAT,
@@ -152,18 +128,16 @@ public class FieldPatternValidator {
         return errors;
     }
 
-    public static List<ValidationError> validateFunctionPatterns(Function<AuditedFieldCode, String> childFields,
-                                                                 Integer childIndex) {
+    public static List<ValidationError> validateFunctionPatterns(Function<AuditedFieldCode, String> childFields, Integer childIndex) {
         List<ValidationError> errors = new ArrayList<>();
         if(invalidDate(childFields.apply(AuditedFieldCode.PERSON_FUNCTION_FROM_DATE))){
-            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_INVALID_FUNCTION_FROM_DATE,
-                    childIndex, DATE_PATTERN));
+            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_INVALID_FUNCTION_FROM_DATE, childIndex, DATE_PATTERN));
         }
 
         if(invalidDate(childFields.apply(AuditedFieldCode.PERSON_FUNCTION_TO_DATE))){
-            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_INVALID_FUNCTION_TO_DATE,
-                    childIndex, DATE_PATTERN));
+            errors.add(new ValidationError(ReglissException.ErrorCode.IMPORT_RECORD_INVALID_FUNCTION_TO_DATE, childIndex, DATE_PATTERN));
         }
         return errors;
     }
 }
+

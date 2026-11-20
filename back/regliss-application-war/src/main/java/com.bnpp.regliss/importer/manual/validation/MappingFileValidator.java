@@ -1,15 +1,11 @@
 package com.bnpp.regliss.importer.manual.validation;
 
-import com.bnpp.regliss.entity.MappingFile;
-import com.bnpp.regliss.entity.ValidationError;
-
-import java.util.List;
+// [MISSING FROM SCREENSHOTS: lines 3-10 of the original file were not visible in the photos]
 
 public interface MappingFileValidator {
+    String STRONG_PROFILE = "manualImportValidationStrong";
+    List<ValidationError> validate(MappingFile mapping);
 
-    String STRONG_PROFILE = "strong-validation";
-
-    List<ValidationError> validate(MappingFile mappingFile);
-
-    RecordValidator createRecordValidator();
+    RecordValidator createRecordValidator(Map<AuditedFieldCode, Function<String, Object>> customFieldMappers, RecordFieldIndexes indexes);
 }
+

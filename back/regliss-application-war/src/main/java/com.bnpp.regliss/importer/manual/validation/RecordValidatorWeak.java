@@ -1,68 +1,66 @@
 package com.bnpp.regliss.importer.manual.validation;
 
-import com.bnpp.regliss.ReglissException;
-import com.bnpp.regliss.annotation.AuditedFieldCode;
-import com.bnpp.regliss.entity.MappingFile;
-import com.bnpp.regliss.entity.ValidationError;
-import com.bnpp.regliss.importer.manual.RecordFieldIndexes;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+// [MISSING FROM SCREENSHOTS: lines 3-14 of the original file were not visible in the photos]
 
 @Slf4j
 public class RecordValidatorWeak implements RecordValidator {
 
-    private Map<AuditedFieldCode, Function<String, Object>> customFieldMappers;
-    private RecordFieldIndexes indexes;
+    private final Map<AuditedFieldCode, Function<String, Object>> customFieldMappers;
+    private final RecordFieldIndexes indexes;
 
-    public RecordValidatorWeak() {
+    public RecordValidatorWeak(Map<AuditedFieldCode, Function<String, Object>> customFieldMappers, RecordFieldIndexes indexes) {
+        this.customFieldMappers = customFieldMappers;
+        this.indexes = indexes;
     }
 
-    @Override
     public List<ValidationError> validateRecord(MappingFile mapping, List<String> row) {
         List<ValidationError> errors = new ArrayList<>();
         errors.addAll(validateFieldsIntegrity(mapping, row));
-        errors.addAll(validateFieldsPatterns(mapping, row));
+        errors.addAll(validateFieldsPatterns(row));
         return errors;
     }
 
-    private List<ValidationError> validateFieldsIntegrity(MappingFile mapping, List<String> row) {
-        List<AuditedFieldCode> requiredColumns = FieldIntegrityValidatorWeak.getAllPossibleRequiredColumns();
-        return FieldIntegrityValidatorWeak.validateMinimumRequiredFieldsArePresentForImport(
-                mapping.getColumns(), requiredColumns);
-    }
-
-    private List<ValidationError> validateFieldsPatterns(MappingFile mapping, List<String> row) {
-        List<ValidationError> errors = new ArrayList<>();
-        // STEP_A
-        errors.addAll(validateFieldValues(mapping, row));
+    private List<ValidationError> validateFieldsIntegrity(MappingFile mapping, List<String> row){
+        List<ValidationError> errors = FieldIntegrityValidatorWeak.validateMinimumRequiredFieldsArePresentForImport(mapping, row);
+        log.trace("Fields integrity validation completed with {} errors", errors.size());
         return errors;
     }
 
-    private List<ValidationError> validateFieldValues(MappingFile mapping, List<String> row) {
+    private List<ValidationError> validateFieldsPatterns(List<String> row){
         List<ValidationError> errors = new ArrayList<>();
-        for (Map.Entry<AuditedFieldCode, Function<String, Object>> entry : customFieldMappers.entrySet()) {
-            AuditedFieldCode fieldCode = entry.getKey();
-            Function<String, Object> fieldResolver = entry.getValue();
-            List<String> columnValues = indexes.getAllColumnValues(fieldCode, row);
-            for (String columnValue : columnValues) {
+        PerformanceMonitor.before(PerformanceMonitor.Action.STEP_A);
+        errors.addAll(validateFieldValues(row));
+        PerformanceMonitor.after(PerformanceMonitor.Action.STEP_A);
+
+        log.trace("Fields patterns validation completed with {} errors", errors.size());
+        return errors;
+    }
+
+
+    private List<ValidationError> validateFieldValues(List<String> row) {
+        List<ValidationError> errors = new ArrayList<>();
+        log.trace("Validating referential in line {}", row);
+        for (AuditedFieldCode fieldCode : indexes.forRecord().getFieldCodes()) {
+            for (String columnValue : indexes.forRecord().getAllColumnValues(fieldCode, row)) {
+                log.trace("Validating referential value, AFC={}: {}", fieldCode, columnValue);
                 if (columnValue != null) {
-                    resolveFieldCollectingErrors(errors, fieldCode, fieldResolver, columnValue);
+                    Function<String, ?> fieldResolver = customFieldMappers.get(fieldCode);
+                    if (fieldResolver != null) {
+                        resolveFieldCollectingErrors(columnValue, fieldResolver, errors);
+                    }
                 }
             }
         }
         return errors;
     }
 
-    private void resolveFieldCollectingErrors(List<ValidationError> errors, AuditedFieldCode fieldCode,
-                                              Function<String, Object> fieldResolver, String columnValue) {
+    private void resolveFieldCollectingErrors(String columnValue, Function<String, ?> fieldResolver, List<ValidationError> errors) {
         try {
             fieldResolver.apply(columnValue);
         } catch (ReglissException e) {
-            errors.add(new ValidationError(e.getErrorCode(), fieldCode.name(), columnValue));
+            errors.add(new ValidationError(e.getErrorCode(), e.getParameters()));
         }
     }
+
 }
+

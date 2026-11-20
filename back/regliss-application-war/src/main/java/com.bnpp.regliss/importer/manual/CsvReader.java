@@ -1,14 +1,9 @@
 package com.bnpp.regliss.importer.manual;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-
-import org.apache.commons.lang.StringUtils;
+// [MISSING FROM SCREENSHOTS: lines 3-9 of the original file were not visible in the photos]
 
 public class CsvReader extends FlatDataSource {
+
 
     public CsvReader(InputStream inputStream) { super(inputStream); }
 
@@ -22,3 +17,4 @@ public class CsvReader extends FlatDataSource {
     }
 
 }
+

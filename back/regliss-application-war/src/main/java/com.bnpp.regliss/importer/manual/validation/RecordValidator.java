@@ -1,11 +1,8 @@
 package com.bnpp.regliss.importer.manual.validation;
 
-import com.bnpp.regliss.entity.MappingFile;
-import com.bnpp.regliss.entity.ValidationError;
-
-import java.util.List;
+// [MISSING FROM SCREENSHOTS: lines 3-6 of the original file were not visible in the photos]
 
 public interface RecordValidator {
-
     List<ValidationError> validateRecord(MappingFile mapping, List<String> row);
 }
+

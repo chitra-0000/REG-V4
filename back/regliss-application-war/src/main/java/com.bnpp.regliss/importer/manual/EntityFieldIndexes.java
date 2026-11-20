@@ -1,54 +1,52 @@
 package com.bnpp.regliss.importer.manual;
 
-import com.bnpp.regliss.MappingColumn;
-import com.bnpp.regliss.annotation.AuditedFieldCode;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableSet;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+// [MISSING FROM SCREENSHOTS: lines 3-14 of the original file were not visible in the photos]
 
 public class EntityFieldIndexes {
-
+    // It's a List of indexes only for these AuditedFieldCode :
+    /** @see com.bnpp.regliss.importer.manual.MappingFileParser.ALLOWED_DUPLICATED_FIELDS */
     private final Map<AuditedFieldCode, List<Integer>> fieldColumnIndexes;
 
     public EntityFieldIndexes(List<MappingColumn> columns) {
-        this.fieldColumnIndexes = columns.stream()
-                .collect(groupingBy(MappingColumn::getFieldCode,
-                        mapping(MappingColumn::getColumnIndex, toList())));
+        fieldColumnIndexes = columns.stream()
+                .collect(groupingBy(MappingColumn::getFieldCode, mapping(MappingColumn::getColumnIndex, toList())));
     }
 
-    public int getSingleIndexForField(AuditedFieldCode fieldCode) {
+    public Integer getSingleIndexForField(AuditedFieldCode fieldCode) {
         List<Integer> indexes = fieldColumnIndexes.get(fieldCode);
-        if (indexes == null || indexes.size() != 1) {
-            throw new IllegalStateException("Expected exactly one column for field " + fieldCode);
+        if (indexes == null) {
+            throw new IllegalArgumentException("AuditedFieldCode not found: " + fieldCode);
+        }
+        if (indexes.size() != 1) {
+            throw new IllegalArgumentException("AuditedFieldCode found multiple times: " + fieldCode);
         }
         return indexes.get(0);
     }
 
     public String getSingleColumnValue(AuditedFieldCode fieldCode, List<String> row) {
-        List<Integer> indexes = fieldColumnIndexes.get(fieldCode);
-        if (indexes == null || indexes.size() != 1) {
+        List<Integer> indexes = fieldColumnIndexes.getOrDefault(fieldCode, emptyList());
+        if (indexes.size()!=1) {
             return null;
         }
-        String value = row.get(indexes.get(0));
-        return org.apache.commons.lang.StringUtils.isBlank(value) ? null : value;
+        String columnValueStr = row.get(indexes.get(0));
+        if (StringUtils.isBlank(columnValueStr)) {
+            return null;
+        } else {
+            return columnValueStr;
+        }
     }
 
     public String getJoinedColumnValues(AuditedFieldCode fieldCode, List<String> row) {
-        List<Integer> indexes = fieldColumnIndexes.get(fieldCode);
-        if (indexes == null) {
+        List<String> allColumnValues = getAllColumnValues(fieldCode, row);
+        if (allColumnValues.isEmpty()) {
             return null;
         }
-        String joined = indexes.stream()
-                .map(row::get)
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining("|"));
-        return joined.isEmpty() ? null : joined;
+        String columnValuesStr = String.join("|", allColumnValues);
+        if (columnValuesStr.isEmpty()) {
+            return null;
+        } else {
+            return columnValuesStr;
+        }
     }
 
     public List<String> getAllColumnValues(AuditedFieldCode fieldCode, List<String> row) {
@@ -64,5 +62,7 @@ public class EntityFieldIndexes {
 
     public Set<AuditedFieldCode> getFieldCodes() {
         return unmodifiableSet(fieldColumnIndexes.keySet());
+
     }
 }
+

@@ -1,15 +1,6 @@
 package com.bnpp.regliss.importer.manual;
 
-import com.bnpp.regliss.ReglissException;
-import com.bnpp.regliss.annotation.AuditedFieldCode;
-import com.bnpp.regliss.MappingColumn;
-import com.bnpp.regliss.entity.MappingFile;
-import com.bnpp.regliss.entity.ValidationError;
-
-import java.util.*;
-
-import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
+// [MISSING FROM SCREENSHOTS: lines 3-12 of the original file were not visible in the photos]
 
 public class ExternalReferenceRegistry {
     private final Map<String, Integer> seen = new HashMap<>();
@@ -41,10 +32,8 @@ public class ExternalReferenceRegistry {
             seen.put(externalReference, line.lineNumber);
             return empty();
         } else {
-            ValidationError validationError = new ValidationError(ReglissException.ErrorCode
-                    .IMPORT_DUPLICATE_EXTERNAL_REFERENCE,
+            ValidationError validationError = new ValidationError(ReglissException.ErrorCode.IMPORT_DUPLICATE_EXTERNAL_REFERENCE,
                     externalReference);
-
             List<Integer> linesPair = asList(seen.get(externalReference), line.lineNumber);
             LineImportErrors error = new LineImportErrors(linesPair, validationError);
             errors.add(error);
@@ -56,3 +45,4 @@ public class ExternalReferenceRegistry {
 
     public Set<String> getSeenExternalReferences() { return seen.keySet(); }
 }
+

@@ -1,15 +1,6 @@
 package com.bnpp.regliss.importer.manual;
 
-import com.bnpp.regliss.ReglissException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+// [MISSING FROM SCREENSHOTS: lines 3-12 of the original file were not visible in the photos]
 
 public abstract class FlatDataSource implements Iterator<ParsedLine>, AutoCloseable {
 
@@ -48,14 +39,16 @@ public abstract class FlatDataSource implements Iterator<ParsedLine>, AutoClosea
 
     protected abstract List<String> parseCells(String nextLine);
 
-    public int nrOfLines() { return lineIndex; }
-
     @Override
     public void close() {
         try {
             reader.close();
         } catch (IOException e) {
-            // ignore
+            throw new ReglissException(e);
         }
     }
+
+    public int nrOfLines() { return (int) reader.lines().count(); }
+
 }
+

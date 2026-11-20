@@ -1,195 +1,137 @@
 package com.bnpp.regliss.importer.manual;
+// [MISSING FROM SCREENSHOTS: lines 2-106 of the original file were not visible in the photos]
+        ExternalReferenceRegistry detector = new ExternalReferenceRegistry(mapping);
+        tryLines.stream().filter(RecordTry::isOk).map(RecordTry::getValue).forEach(detector::addAndTestIfNew);
+        errors.addAll(detector.getErrors());
 
-import com.bnpp.regliss.ReglissException;
-import com.bnpp.regliss.annotation.ReglissBatchProfile;
-import com.bnpp.regliss.entity.MappingFile;
-import com.bnpp.regliss.entity.ValidationError;
-import com.bnpp.regliss.entity.Version;
-import com.bnpp.regliss.importer.manual.validation.MappingFileValidator;
-import com.bnpp.regliss.importer.manual.validation.RecordValidator;
-import com.bnpp.regliss.repository.MappingFileRepository;
-import com.bnpp.regliss.repository.VersionRepository;
-import com.bnpp.regliss.service.VersionAuditService;
-import com.bnpp.regliss.service.VersionService;
-import com.bnpp.regliss.service.progress.ProgressService;
-import com.bnpp.regliss.utils.LambdaUtil;
-import com.bnpp.regliss.utils.PerformanceMonitor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
+        log.debug("Creating+validating all records");
+        RecordParser recordParser = recordParserFactory.getObject();
+        recordParser.initialize(mapping);
+        List<RecordTry<Record>> tryRecords = tryLines.stream().filter(RecordTry::isOk)
+                .map(row -> recordParser.createRecord(mapping, row.getValue())).collect(toList());
+        errors.addAll(getErrors(tryLines, tryRecords));
+        log.debug("Created + validated OK");
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-@Slf4j
-@Service
-@ReglissBatchProfile
-public class ManualImportBulkJob {
-
-    private static final String COULD_NOT_READ_FROM_TEMP_FILE = "Could not read from temp file";
-    private static final int PAGE_SIZE = 100;
-
-    @Autowired
-    private VersionAuditService versionAuditService;
-
-    @Autowired
-    private RecordParserFactory recordParserFactory;
-
-    @Autowired
-    private VersionRepository versionRepo;
-
-    @Autowired
-    private UpdateEngineFactory updateEngineFactory;
-
-    @Autowired
-    private ProgressService progressService;
-
-    @Autowired
-    private MappingFileRepository mappingFileRepository;
-
-    @Autowired
-    private VersionService versionService;
-
-    private TransactionTemplate tx; // NOSONAR
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.tx = new TransactionTemplate();
-        // TODO: tx configuration from dataSource - exact setup not fully visible
-    }
-
-    public void allInMemoryImplem(Long versionId, InputStream inputStream, String fileName) {
-        PerformanceMonitor.start("allInMemoryImplem");
-        doAllInMemoryImplem(versionId, inputStream, fileName);
-        PerformanceMonitor.stop("allInMemoryImplem");
-    }
-
-    private void doAllInMemoryImplem(Long versionId, InputStream inputStream, String fileName) {
-        Version version = versionRepo.getExactlyOne(versionId);
-        versionService.validateVersionStatus(version);
-
-        MappingFile mappingFile = mappingFileRepository.findByVersion(version);
-
-        List<ParsedLine> parsedLines = parseFile(inputStream, mappingFile, fileName);
-
-        ExternalReferenceRegistry externalReferenceRegistry = new ExternalReferenceRegistry(mappingFile);
-
-        RecordValidator recordValidator = ((MappingFileValidator) mappingFile).createRecordValidator();
-
-        List<LineImportErrors> allErrors = new ArrayList<>();
-        for (ParsedLine line : parsedLines) {
-            externalReferenceRegistry.addAndTestIfNew(line);
-            List<ValidationError> recordErrors = recordValidator.validateRecord(mappingFile, line.cells);
-            if (!recordErrors.isEmpty()) {
-                allErrors.add(new LineImportErrors(line.lineNumber, recordErrors));
-            }
+        if (errors.isEmpty()) {
+            processAll(tryRecords.stream().map(RecordTry::getValue), versionId, totalRecordsNumber, batchExecutionId);
+            log.debug("Start computing version statistics {}",versionId);
+            versionService.writeCountRecordNumbers(versionId);
+            log.debug("Statistics saved for version {}",versionId);
+            completeImportInTx(versionId, importedFile.getOriginalFileName());
         }
-
-        processAll(version, parsedLines, allErrors, externalReferenceRegistry);
+        return errors;
     }
 
-    private void processAll(Version version, List<ParsedLine> parsedLines,
-                            List<LineImportErrors> allErrors,
-                            ExternalReferenceRegistry externalReferenceRegistry) {
-        List<List<ParsedLine>> partitions = LambdaUtil.partition(parsedLines, PAGE_SIZE);
-
-        for (List<ParsedLine> partition : partitions) {
-            mergeProgramsInAdvanceInSingleThreadInTx(version, partition);
-            insertOrUpdateForManualImportInTx(version, partition);
-            incrementImportSemiAutoBatchExecution(version);
-        }
-
-        Set<String> externalReferencesToDelete = externalReferenceRegistry.getSeenExternalReferences();
-        // TODO: externalReferencesToDelete logic - exact handling not fully visible
-    }
-
-    public int getTotalRecordsNumber(InputStream inputStream) {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
-            return workbook.getSheetAt(0).getLastRowNum();
+    private int getTotalRecordsNumber(File tempFile) {
+        try (FileInputStream fis4NrLines = new FileInputStream(tempFile);
+             XSSFWorkbook myWorkBook = new XSSFWorkbook(fis4NrLines)) {
+            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            return mySheet.getLastRowNum() + 1;
         } catch (IOException e) {
-            throw new ReglissException(COULD_NOT_READ_FROM_TEMP_FILE, e);
+            throw new ReglissException(e, COULD_NOT_READ_FROM_TEMP_FILE);
         }
     }
 
-    private List<ParsedLine> parseFile(InputStream inputStream, MappingFile mappingFile, String fileName) {
-        List<ParsedLine> lines = readFile(inputStream, fileName);
+    public void processAll(Stream<Record> recordsStream, long versionId, int totalNumberOfRecords, long batchExecutionId) {
+        RecordUpdateEngine engine = updateEngineFactory.getObject();
+        engine.initializeForImportIn(versionId, true);
+        List<String> seenExternalReferences = new ArrayList<>();
 
-        // remove header
-        ParsedLine header = lines.remove(0);
+        ManualImportStats stats = new ManualImportStats();
+        LambdaUtil.partition(recordsStream, PAGE_SIZE).forEach(partition -> {
+            seenExternalReferences.addAll(partition.stream().map(Record::getExternalReference).collect(toList()));
 
-        // FGAT RUJ00257
-        validateHeader(mappingFile, header);
-        checkRowsColumnCount(lines, mappingFile);
+            engine.mergeProgramsInAdvanceInSingleThreadInTx(partition);
+            engine.insertOrUpdateForManualImportInTx(partition, stats);
 
-        return lines;
+            progressService.incrementImportSemiAutoBatchExecution(batchExecutionId, partition.size(), totalNumberOfRecords);
+        });
+
+        List<String> externalReferencesToDelete = new ArrayList<>(
+                engine.getExternalReferencesToIdInPreviousVersion().keySet());
+        externalReferencesToDelete.removeAll(seenExternalReferences);
+        stats.setTotalDeleted(externalReferencesToDelete.size());
+        engine.deleteRecords(externalReferencesToDelete);
+
+        log.debug("TOTALS: {}", stats);
     }
 
-    private List<ParsedLine> readFile(InputStream inputStream, String fileName) {
-        if (!fileName.toLowerCase().endsWith(".xlsx")) {
-            throw new ReglissException(ReglissException.ErrorCode.IMPORT_INVALID_FILE_FORMAT);
+    private void validateVersionStatus(Version version) {
+        if (!version.statusIsOneOf(VersionStatus.DRAFT, VersionStatus.RETURNED)) {
+            throw new IllegalArgumentException();
         }
-        return XlsxParser.readFile(inputStream);
     }
 
-    public void completeImportInTx(Long versionId, String fileName) {
-        tx.execute(status -> {
+    public List<RecordTry<ParsedLine>> parseFile(String fileName, InputStream inputStream, MappingFile mapping) {
+        List<ParsedLine> rows = readFile(fileName, inputStream);
+
+        int headerSize = rows.get(0).cells.size();
+        ParsedLine headerRow = rows.remove(0);
+        // FGAT RUJ00257 - False Positive: MappingFile comes from the database. No need
+        // for canonicalization.
+        validateHeader(mapping, headerRow);
+
+        return checkRowsColumnCount(rows, headerSize);
+    }
+
+    private List<ParsedLine> readFile(String fileName, InputStream inputStream) {
+        try {
+            if (UploadedFileExtension.fromFileName(fileName) != XLSX) {
+                throw new IllegalArgumentException("Only xlsx is processed in bulk mode");
+            }
+            return XlsxParser.readFile(inputStream);
+        } catch (IOException e) {
+            throw new ReglissException(e, ReglissException.ErrorCode.IMPORT_FILE_PARSE_ERROR);
+        }
+    }
+
+    private void completeImportInTx(long versionId, String originalFileName) {
+        tx.execute(unused -> {
             Version version = versionRepo.getExactlyOne(versionId);
-            version.setFileName(fileName);
+            version.setFileName(originalFileName);
             versionAuditService.auditImportFile(version);
-            return null;
+            return 1;
         });
     }
 
-    public List<LineImportErrors> getErrors(List<LineImportErrors> allErrors) {
-        return allErrors.stream()
-                .limit(20)
-                .collect(Collectors.toList());
+    private List<LineImportErrors> getErrors(List<RecordTry<ParsedLine>> tryLines, List<RecordTry<Record>> tryRecords) {
+        List<LineImportErrors> errors = new ArrayList<>();
+        errors.addAll(RecordTry.extractErrors(tryLines));
+        errors.addAll(RecordTry.extractErrors(tryRecords));
+        if (errors.size() > 19) {
+            errors = errors.subList(0, 20);
+        }
+        return errors;
     }
 
-    private void validateHeader(MappingFile mappingFile, ParsedLine header) {
-        if (mappingFile.getColumns().size() != header.cells.size()) {
-            throw new ReglissException(ReglissException.ErrorCode.IMPORT_INVALID_COLUMN_COUNT);
+    private void validateHeader(MappingFile mapping, ParsedLine headerRow) {
+        if (mapping.getColumns().size() != headerRow.cells.size()) {
+            throw new ReglissException(
+                    ReglissException.ErrorCode.IMPORT_FILE_HEADER_LENGTH_DIFFERENT_FROM_MAPPING_FILE_LENGTH);
         }
-        for (int i = 0; i < mappingFile.getColumns().size(); i++) {
-            String expectedLabel = mappingFile.getColumns().get(i).getLabel();
-            String actualLabel = header.cells.get(i);
-            if (!expectedLabel.equals(actualLabel)) {
-                throw new ReglissException(ReglissException.ErrorCode.IMPORT_INVALID_COLUMN_LABEL,
-                        expectedLabel, actualLabel);
+        for (int i = 0; i < mapping.getColumns().size(); i++) {
+            String expectedLabel = mapping.getColumns().get(i).getColumnLabel();
+            String actualLabel = headerRow.cells.get(i);
+            if (!ObjectUtils.equals(expectedLabel, actualLabel)) {
+                throw new ReglissException(ReglissException.ErrorCode.IMPORT_FILE_HEADER_DIFFERENT, (i + 1) + "",
+                        expectedLabel != null ? expectedLabel : "\"\"", actualLabel != null ? actualLabel : "\"\"");
             }
         }
     }
 
-    private void checkRowsColumnCount(List<ParsedLine> lines, MappingFile mappingFile) {
-        int expectedColumnCount = mappingFile.getColumns().size();
-        for (ParsedLine line : lines) {
-            if (line.cells.size() != expectedColumnCount) {
-                throw new ReglissException(ReglissException.ErrorCode.IMPORT_INVALID_ROW_COLUMN_COUNT,
-                        String.valueOf(line.lineNumber));
-            }
+    private List<RecordTry<ParsedLine>> checkRowsColumnCount(List<ParsedLine> rows, int headerSize) {
+        return rows.stream().map(line -> tryCheckLineCount(line, headerSize)).collect(toList());
+    }
+
+    private RecordTry<ParsedLine> tryCheckLineCount(ParsedLine parsedLine, int headerSize) {
+        if (parsedLine.cells.size() != headerSize) {
+            ValidationError error = new ValidationError(
+                    ReglissException.ErrorCode.IMPORT_ROW_LENGTH_DIFFERENT_FROM_HEADER_LENGTH);
+            return new RecordTry<>(new LineImportErrors(parsedLine.lineNumber, error));
+        } else {
+            return new RecordTry<>(parsedLine);
         }
     }
 
-    private void tryCheckLineCount(List<ParsedLine> lines) {
-        // TODO: exact line count check logic not fully visible
-    }
-
-    private void mergeProgramsInAdvanceInSingleThreadInTx(Version version, List<ParsedLine> partition) {
-        // TODO: exact implementation not visible in photos
-    }
-
-    private void insertOrUpdateForManualImportInTx(Version version, List<ParsedLine> partition) {
-        // TODO: exact implementation not visible in photos
-    }
-
-    private void incrementImportSemiAutoBatchExecution(Version version) {
-        // TODO: exact implementation not visible in photos
-    }
 }
+
