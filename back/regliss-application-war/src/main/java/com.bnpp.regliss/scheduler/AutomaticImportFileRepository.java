@@ -56,7 +56,9 @@ public class AutomaticImportFileRepository {
         return inputFiles.stream().map(File::getName).collect(toList());
     }
 
-    public void deleteFiles(AutomaticImportFeedBase feed) { feed.getAllFileNames().forEach(this::deleteInputFile); }
+    public void deleteFiles(AutomaticImportFeedBase feed) {
+        feed.getAllFileNames().forEach(this::deleteInputFile);
+    }
 
     public void moveToIgnoreDirectory(AutomaticImportFeedBase feed) {
         for (String fileName : feed.getAllFileNames()) {
@@ -73,12 +75,18 @@ public class AutomaticImportFileRepository {
             feed.getAllFileNames().forEach(this::moveToErrorDirectory);
     }
 
-    public File createInputFileByName(String fileName) { return fileRepo.createFileByName(inputDirectory, fileName); }
+    public File createInputFileByName(String fileName) {
+        return fileRepo.createFileByName(inputDirectory, fileName);
+    }
 
 
-    public Path getPathForFilename(String fileName) { return Paths.get(inputDirectory.toURI()).resolve(fileName); }
+    public Path getPathForFilename(String fileName) {
+        return Paths.get(inputDirectory.toURI()).resolve(fileName);
+    }
 
-    public File getInputDirectory() { return inputDirectory; }
+    public File getInputDirectory() {
+        return inputDirectory;
+    }
 
     public List<File> getDirectoriesWithFreeSpaceBellowThreshold(long minSpaceThresholdMB) {
         long minSpaceThresholdBytes = minSpaceThresholdMB * 1024 * 1024;
@@ -87,7 +95,9 @@ public class AutomaticImportFileRepository {
                 .collect(Collectors.toList());
     }
 
-    public void deleteInputFile(String fileName) { fileRepo.deleteFile(inputDirectory, fileName); }
+    public void deleteInputFile(String fileName) {
+        fileRepo.deleteFile(inputDirectory, fileName);
+    }
 
     public int getFileAgeInSeconds(String fileName) {
         long lastModifiedTime = 0;
@@ -99,13 +109,17 @@ public class AutomaticImportFileRepository {
         return (int) ((System.currentTimeMillis() - lastModifiedTime) / 1000);
     }
 
-    public File getInputFileByName(String fileName) { return fileRepo.getFileByName(inputDirectory, fileName); }
+    public File getInputFileByName(String fileName) {
+        return fileRepo.getFileByName(inputDirectory, fileName);
+    }
 
     public String computeMD5HashOfInputFile(String fileName) {
         return fileRepo.computeMD5HashOfFile(inputDirectory, fileName);
     }
 
-    public String readInputFileFully(String fileName) { return fileRepo.readFully(inputDirectory, fileName); }
+    public String readInputFileFully(String fileName) {
+        return fileRepo.readFully(inputDirectory, fileName);
+    }
 
     public void createInputFileWithContent(String fileName, InputStream is) throws IOException {
         File targetFile = createInputFileByName(fileName);

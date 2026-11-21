@@ -35,7 +35,7 @@ class CustomAutomaticXmlHandler extends DefaultHandler {
     private boolean isJuridictionBase = false;
 
     public static CustomAutomaticXmlHandler getXmlDataFromCustomAutomaticFile(Supplier<UnicodeBOMInputStream> xmlInputStreamSupplier) throws IOException {
-        // TODO extract port to remove duplication in this class and DjLogLivraisonService
+        // TODO extract part to remove duplication in this class and DjLogLivraisonService
         try (Reader reader = new BufferedReader(new InputStreamReader(xmlInputStreamSupplier.get()), 10 * 1024 * 1024)) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);

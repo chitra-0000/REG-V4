@@ -73,9 +73,9 @@ public class SixCftgtwFeedGenerator {
             case XML_LOG_FILE:
                 return computeXmlLogFileName(feedId);
             case CSV_DATA_FILE:
-                return getWLAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + "_" + getImportModeSuffix(feedId) + ".zip";
+                return getWlAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + "_" + getImportModeSuffix(feedId) + ".zip";
             case CSV_CHECKSUM_FILE:
-                return CHECKSUM_PREFIX + "_" + getWLAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + "_" + getImportModeSuffix(feedId) + ".txt";
+                return CHECKSUM_PREFIX + "_" + getWlAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + "_" + getImportModeSuffix(feedId) + ".txt";
             case CSV_LOG_FILE:
                 return computeCsvLogFileName(feedId, listFormat);
             default:
@@ -93,7 +93,7 @@ public class SixCftgtwFeedGenerator {
 
     private String computeCsvLogFileName(DJFeedId feedId, ImportFileType listFormat) {
         if (feedId.getImportMode() == DJFileImportMode.FULL) {
-            return getWLAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + ".txt";
+            return getWlAmeCsvPrefix(listFormat) + "_" + feedId.getDateStamp() + ".txt";
         } else {
             return null;
         }

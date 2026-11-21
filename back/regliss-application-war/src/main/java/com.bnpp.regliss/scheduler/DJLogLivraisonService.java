@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 
 import static com.bnpp.regliss.entity.ImportFileType.DOW_JONES_AME;
 import static com.bnpp.regliss.entity.ImportFileType.DOW_JONES_WATCHLIST;
-import static com.bnpp.regliss.utils.DJFilenameHelper.getWLAmeCsvPrefix;
-import static com.bnpp.regliss.utils.DJFilenameHelper.getWLAmeXmlPrefix;
+import static com.bnpp.regliss.utils.DJFilenameHelper.getWlAmeCsvPrefix;
+import static com.bnpp.regliss.utils.DJFilenameHelper.getWlAmeXmlPrefix;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -144,10 +144,10 @@ public class DJLogLivraisonService {
     private List<String> getLogPrefixesForFormat(ImportFileType importFileType, Map<String, ReglissList> allUpperCasePrefixes) {
         switch (importFileType) {
             case DOW_JONES_WATCHLIST:
-                return asList(getWLAmeXmlPrefix(DOW_JONES_WATCHLIST), getWLAmeCsvPrefix(DOW_JONES_WATCHLIST));
+                return asList(getWlAmeXmlPrefix(DOW_JONES_WATCHLIST), getWlAmeCsvPrefix(DOW_JONES_WATCHLIST));
 
             case DOW_JONES_AME:
-                return asList(getWLAmeXmlPrefix(DOW_JONES_AME), getWLAmeCsvPrefix(DOW_JONES_AME));
+                return asList(getWlAmeXmlPrefix(DOW_JONES_AME), getWlAmeCsvPrefix(DOW_JONES_AME));
             case DOW_JONES_CORE:
                 return allUpperCasePrefixes.entrySet().stream()
                         .filter(entry -> entry.getValue().getImportConfiguration().getImportFileType() == importFileType)

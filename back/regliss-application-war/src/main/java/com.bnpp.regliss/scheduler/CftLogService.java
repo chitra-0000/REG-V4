@@ -64,7 +64,7 @@ public class CftLogService {
     // CFTBNP23+E+MG34117T+M087140R+REGUTID1++/applis/REGLISSTestCFT/FichierTestCFT.txt+K0+406
     // RCO 301+H1710210+FichierTestCFT.t+CANDLEEXIT
     public CftLogEntry parseLine(String line) {
-        //  One CFT log entry line from IDU.log, should have 12 fields separated by 11 '+' chars!
+        // One CFT log entry line from IDU.log, should have 12 fields separated by 11 '+' chars!
         try {
             CftLogEntry entry = new CftLogEntry();
             String[] parts = line.split("\\+");
@@ -169,7 +169,9 @@ public class CftLogService {
         }
     }
 
-    public List<Long> getAllIdsInProgress() { return fileDeliveryRepo.getAllIdsInProgress(); }
+    public List<Long> getAllIdsInProgress() {
+        return fileDeliveryRepo.getAllIdsInProgress();
+    }
 
     public List<Long> getAllIdsByRemainingCftLogTimeIdsIsNotNull() {
         return cftgtwRequestRepo.getAllIdsByRemainingCftLogTimeIdsIsNotNull();

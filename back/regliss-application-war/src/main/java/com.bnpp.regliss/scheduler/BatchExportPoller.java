@@ -68,7 +68,7 @@ public class BatchExportPoller {
     public void generateExportFiles() {
         BatchExport batchExport = batchExportRepository.getOrderedBatchExportRecords();
         while (thereAreFreeThreads() && null != batchExport && BatchExportType.SIX_CONFIDENCE_VALUES != batchExport.getExportParams().getExportType()) {
-            if(batchManagementService.tryLockBatchExport(batchExport.getId())) {
+            if(batchExportService.tryLockBatchExport(batchExport.getId())) {
                 log.debug("Found batch export record {}", batchExport.getId());
                 Version version = batchExport.getExportParams().getVersionOpt().orElse(null);
                 BatchExportType batchExportType = batchExport.getExportParams().getExportType();
@@ -114,7 +114,9 @@ public class BatchExportPoller {
         }
     }
 
-    private boolean thereAreFreeThreads() { return(executor.getMaxPoolSize()-executor.getActiveCount()>0); }
+    private boolean thereAreFreeThreads() {
+        return(executor.getMaxPoolSize()-executor.getActiveCount()>0);
+    }
 
     private void generateFiles(BatchExport batchExport) {
         switch(batchExport.getExportParams().getExportType()) {

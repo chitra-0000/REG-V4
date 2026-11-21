@@ -140,8 +140,12 @@ public class CftSender {
         }
     }
 
-    public File getPushFolderBase() { return pushFolderBase; }
+    public File getPushFolderBase() {
+        return pushFolderBase;
+    }
 
-    public void setPushFolderBase(File pushFolderBase) { this.pushFolderBase = pushFolderBase; }
+    public void setPushFolderBase(File pushFolderBase) {
+        this.pushFolderBase = pushFolderBase;
+    }
 }
 

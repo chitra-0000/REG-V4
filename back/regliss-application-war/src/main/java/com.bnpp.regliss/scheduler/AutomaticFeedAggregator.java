@@ -114,7 +114,7 @@ public class AutomaticFeedAggregator {
 
             getFeedToProcess(list, listFeeds, importFileType)
                     .filter(feed -> checkListReadyForImport(list, feed) &&
-                          !checkFeedIsOlderThanPreviousVersion(list, feed, importFileType))
+                            !checkFeedIsOlderThanPreviousVersion(list, feed, importFileType))
                     .ifPresent(feed -> listImportableFeeds.put(list.getId(), feed));
         }
 
@@ -171,6 +171,7 @@ public class AutomaticFeedAggregator {
             throw new IllegalStateException();
         }
 
+
         AutomaticImportFeedIdBase previousFeedId = feedAgregator.getPreviousFeedId(previousVersion);
         AutomaticImportFeedIdBase currentFeedId = feed.getFeedId();
         if(previousVersion.getImportFileType() == list.getImportFileType()) {
@@ -203,7 +204,6 @@ public class AutomaticFeedAggregator {
                 .filter(f -> checkZipHierarchy(f,importFileType, list) )
                 .filter(f -> feedAgregator.feedIsReadyForImport(list, f) )
                 .filter(f -> checkAllRequiredFilesPresentForAutoImport(list, f, importFileType));
-
     }
     private boolean checkFileForcedWaitTime( AutomaticImportFeedBase feedA){
         try {
@@ -353,21 +353,21 @@ public class AutomaticFeedAggregator {
                     .stream()
                     .filter(e -> e.getKey().startsWith("GSM") && e.getKey().contains(INSTR_MARKER))
                     .map(Entry::getValue)
-                    .findFirst().orElseThrow(() -> new ReglissException("No six instrument raw file found in regliss db "));
+                    .findFirst().orElseThrow(()-> new ReglissException("No six instrument raw file found in regliss db "));
 
         } else if (feedFileName.startsWith("GSM") && feedFileName.contains(STRUCT_MARKER)) {
             return upperCasePrefixToList.entrySet()
                     .stream()
                     .filter(e -> e.getKey().startsWith("GSM") && e.getKey().contains(STRUCT_MARKER))
                     .map(Entry::getValue)
-                    .findFirst().orElseThrow(() -> new ReglissException("No six structure raw file found in regliss db "));
+                    .findFirst().orElseThrow(()-> new ReglissException("No six structure raw file found in regliss db "));
 
         } else if (feedFileName.startsWith("GSM") && feedFileName.contains(OPT_MARKER)) {
             return upperCasePrefixToList.entrySet()
                     .stream()
                     .filter(e -> e.getKey().startsWith("GSM") && e.getKey().contains(OPT_MARKER))
                     .map(Entry::getValue)
-                    .findFirst().orElseThrow(() -> new ReglissException("No six options raw file found in regliss db "));
+                    .findFirst().orElseThrow(()-> new ReglissException("No six options raw file found in regliss db "));
 
         } else {
             return upperCasePrefixToList.get(feed.getFeedId().getPrefix().toUpperCase()); // CSV_PFA_ , PFA2_
@@ -381,7 +381,7 @@ public class AutomaticFeedAggregator {
         for (String fileName : fileNamesInInputFolder) {
             try {
                 if (!FeedIdHelper.filenameHasCorrectPatternForFormat(fileName, importFileType)) {
-                    throw new IllegalArgumentException("Invalid pattern for file: " + fileName + " and format ".+ importFileType);
+                    throw new IllegalArgumentException("Invalid pattern for file: " + fileName + " and format " + importFileType);
                 }
                 AutomaticImportFeedIdBase feedId = FeedIdHelper.feedIdFromFilename(fileName, importFileType);
                 feedId.setPrefix(computeCorrelationPrefix(feedId));
@@ -448,9 +448,9 @@ public class AutomaticFeedAggregator {
     private String computeCorrelationPrefix(AutomaticImportFeedIdBase feedId) {
         String prefix;
         if (DJFilenameHelper.isWatchlistCsv(feedId.getPrefix())) {
-            prefix = DJFilenameHelper.getWLAmeXmlPrefix(ImportFileType.DOW_JONES_WATCHLIST);
+            prefix = DJFilenameHelper.getWlAmeXmlPrefix(ImportFileType.DOW_JONES_WATCHLIST);
         } else if (DJFilenameHelper.isAmeCsv(feedId.getPrefix())) {
-            prefix = DJFilenameHelper.getWLAmeXmlPrefix(ImportFileType.DOW_JONES_AME);
+            prefix = DJFilenameHelper.getWlAmeXmlPrefix(ImportFileType.DOW_JONES_AME);
         } else {
             prefix = feedId.getPrefix();
         }

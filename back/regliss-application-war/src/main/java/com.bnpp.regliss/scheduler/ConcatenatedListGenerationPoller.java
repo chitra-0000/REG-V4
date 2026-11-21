@@ -32,8 +32,8 @@ public class ConcatenatedListGenerationPoller {
     @Scheduled(cron = "${task.concatenated_list_generator.cron}")
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void generateConcatenatedListFiles() {
-        DistributedLock distributedLock = new DistributedLock("generateConcatenatedListFiles1");
-        DistributedLockHandler.Builder distributedLockHandlerBuilder = new DistributedLockHandler.Builder()
+       DistributedLock distributedLock = new DistributedLock("generateConcatenatedListFiles1");
+       DistributedLockHandler.Builder distributedLockHandlerBuilder = new DistributedLockHandler.Builder()
                 .lock(distributedLock)
                 .onSuccess(lock -> {
                   List<Long> filesToGenerateIds = concatenatedListService.getConcatenatedListsFilesToGenerateInTx();
