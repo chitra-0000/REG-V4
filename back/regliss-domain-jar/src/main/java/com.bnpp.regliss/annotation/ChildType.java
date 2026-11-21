@@ -1,0 +1,29 @@
+package com.bnpp.regliss.annotation;
+
+public enum ChildType {
+    ADDRESS,
+    ALIAS,
+    PROGRAM,
+    IDENTITY,
+    DATE_DETAILS,
+    PERSON_BIOGRAPHY,
+    COUNTRY_DETAILS,
+    SANCTION_REFERENCE,
+    SOURCE,
+
+    RELATION,
+    ASSOCIATION,
+    FUNCTION,
+
+    IMAGE,
+    IBAN,
+    BIC,
+    ISIN,
+    CUSIP,
+    OTHERCODE,
+    GENDER,
+    SANCTION_TYPE,
+    DESCRIPTION3,
+    OCCUPATION_CATEGORY,
+    RECORD_CATEGORY
+}
