@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 (http://www.altova.com) by Administrator (cetrel) -->
+<!-- Version 1.4 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="SANCTIONS_ISSUER">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="HEADER">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="VERSION" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="EN">XML format version</xs:documentation>
+                                    <xs:documentation xml:lang="FR">Version du format XML</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="DELIVERY_DATE" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="EN">Delivery date fo the file</xs:documentation>
+                                    <xs:documentation xml:lang="FR">Date de livraison du fichier</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ISSUERS">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ISSUER" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="GK_CODE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CS_ID" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="SCOPE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="SANCTIONED_PARENT_ENTITY" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CONFIDENCE_LEVEL" type="xs:string"/>
+                                        <xs:element name="NAMES" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="NAME" minOccurs="0" maxOccurs="unbounded">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="SHORTNAME" type="xs:string" minOccurs="0"/>
+                                                                <xs:element name="NAME" type="xs:string" minOccurs="0"/>
+                                                            </xs:sequence>
+                                                            <xs:attribute name="LANGUAGE" type="xs:string"/>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="ADDRESS" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="ADDRESS_1" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="ZIP_CODE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CITY" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="COUNTRY" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="INSTI_URL" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="LEI" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="LEGAL_FORM" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="DOMICILE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="SECTOR" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="RELEVANT_MEETING_DATE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="RELEVANT_MEETING_TYPE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="RELEVANT_MEETING_AGENDAITEM" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CA_EFFECTIVE_DATE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CA_TYPE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="CA_TRANS_TYPE" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="IS_ISSUING" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="TARGETS">
+                                            <xs:complexType>
+                                                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                                    <xs:element name="TARGET">
+                                                        <xs:complexType>
+                                                            <xs:sequence minOccurs="0">
+                                                                <xs:element name="SANCTIONED" type="xs:string"/>
+                                                                <xs:element name="REGIMES" minOccurs="0">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                            <xs:element name="REGIME" minOccurs="0" maxOccurs="unbounded">
+                                                                                <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                        <xs:element name="LEGAL_BASIS" type="xs:string"/>
+                                                                                    </xs:sequence>
+                                                                                    <xs:attribute name="NAME" type="xs:string"/>
+                                                                                </xs:complexType>
+                                                                            </xs:element>
+                                                                        </xs:sequence>
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                                <xs:element name="STATUS" type="xs:string" minOccurs="0"/>
+                                                                <xs:element name="REASON_FOR_CHANGE" type="xs:string" minOccurs="0"/>
+                                                            </xs:sequence>
+                                                            <xs:attribute name="NAME" type="xs:string"/>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="MEETINGS" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="MEETING" minOccurs="0" maxOccurs="unbounded">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="RELEVANT_MEETING_DATE" type="xs:string"/>
+                                                                <xs:element name="RELEVANT_MEETING_TYPE" type="xs:string"/>
+                                                                <xs:element name="RELEVANT_MEETING_AGENDA_ITEM" type="xs:string"/>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="CAS" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="CA" minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="EFFECTIVE_DATE" type="xs:string"/>
+                                                                <xs:element name="CA_TYPE" type="xs:string"/>
+                                                                <xs:element name="CA_TRANS_TYPE" type="xs:string"/>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
