@@ -1,0 +1,1218 @@
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0" xmlns:ref="xalan://com.bnpp.regliss.importer.dj.XsltApi">
+
+    <xsl:variable name="ref" select="ref:getInstanceFromSpring('DOW_JONES_CORE')"/>
+    <xsl:variable name="programCodes" select="'9 10 11 12 13 14 27 28 29 30 31 32 33 34 35 36 38 66 67.68 70 71'"/>
+    <xsl:variable name="bicCodes" select="'15'"/>
+
+    <xsl:template
+            match="/Person[Descriptions/Description/@Description1 = '1' or Descriptions/Description/@Description1 = '3' or Descriptions/Description/@Description1 = '9']">
+        <root>
+            <PERSON>
+                <xsl:attribute name="ACTION">
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </xsl:attribute>
+                <ACTION>
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </ACTION>
+
+                <!--                <xsl:call-template name="PRINT_APPLICATION_DATE"/>         -->
+                <RECORD_START_DATE>
+                    <xsl:value-of select="ref:toXsdDate(@date,'dd-MMM-yyyy')"/>
+                </RECORD_START_DATE>
+
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@id"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <xsl:call-template name="PRINT_GENDERS"/>
+                <xsl:call-template name="PRINT_PRIMARY_NAME_PERSON"/>
+                <xsl:call-template name="PRINT_ALIASES_PERSON"/>
+
+                <xsl:choose>
+                    <xsl:when test="DateDetails/DateType[@code='2']
+                                    or normalize-space(DeceasedDetails/Deceased/DeceasedValue)='Yes'">
+                        <PERSON_IS_DECEASED>true</PERSON_IS_DECEASED>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <PERSON_IS_DECEASED>false</PERSON_IS_DECEASED>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+                <xsl:call-template name="PRINT_PERSON_DATE_DETAILS"/>
+
+                <xsl:call-template name="PRINT_BIRTH_PLACE"/>
+
+                <xsl:call-template name="PRINT_CATEG_SANCTION_TYPE_DESCR3"/>
+
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS"/>
+
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+
+                <xsl:call-template name="PRINT_ADDRESSES"/>
+                <xsl:for-each select="CountryDetails/CountryType[@code='1' or @code='2']">
+                    <xsl:call-template name="PRINT_COUNTRY_DETAILS"/>
+                </xsl:for-each>
+
+                <xsl:call-template name="PRINT_SANCTION_REFERENCES_WITH_QUESTION_PLACEHOLDER_FOR_MISSING_DATES"/>
+
+                <xsl:call-template name="PRINT_SOURCES"/>
+
+            </PERSON>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="/Entity[not(Descriptions/Description/@Description3 = '8')]">
+        <root>
+            <ENTITY>
+                <xsl:attribute name="ACTION">
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </xsl:attribute>
+                <ACTION>
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </ACTION>
+
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+
+                <!--                <xsl:call-template name="PRINT_APPLICATION_DATE"/>-->
+                <RECORD_START_DATE>
+                    <xsl:value-of select="ref:toXsdDate(@date,'dd-MMM-yyyy')"/>
+                </RECORD_START_DATE>
+
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@id"/>
+                </RECORD_EXTERNAL_REFERENCE>
+
+                <xsl:for-each select="IdentificationDetails/IDType[@code='15']/IDTypeValue">
+                    <xsl:variable name="bic" select="IDValue"/>
+                    <BIC>
+                        <BIC_VALUE>
+                            <xsl:value-of select="substring(translate($bic,' ',''),1,8)"/>
+                        </BIC_VALUE>
+                    </BIC>
+                </xsl:for-each>
+
+                <xsl:for-each select="IdentificationDetails/IDType[@code='26']/IDTypeValue">
+                    <ISIN>
+                        <ISIN_VALUE>
+                            <xsl:value-of select="IDValue"/>
+                        </ISIN_VALUE>
+                    </ISIN>
+                </xsl:for-each>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_PRIMARY_NAME"/>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_ALIASES"/>
+
+                <xsl:call-template name="PRINT_CATEG_SANCTION_TYPE_DESCR3"/>
+
+                <xsl:call-template name="PRINT_ADDRESSES"/>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_DATE_REGISTRATION"/>
+
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS"/>
+
+                <xsl:call-template name="PRINT_SANCTION_REFERENCES_WITH_QUESTION_PLACEHOLDER_FOR_MISSING_DATES"/>
+
+                <xsl:call-template name="PRINT_SOURCES"/>
+
+                <xsl:for-each select="CountryDetails/CountryType[@code='3' or @code='4']">
+                    <xsl:call-template name="PRINT_COUNTRY_DETAILS"/>
+                </xsl:for-each>
+            </ENTITY>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="/Entity[Descriptions/Description/@Description3 = '8']">
+        <root>
+            <VESSEL>
+                <xsl:attribute name="ACTION">
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </xsl:attribute>
+                <ACTION>
+                    <xsl:call-template name="PRINT_ACTION_NAME"/>
+                </ACTION>
+
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+
+                <!--                <xsl:call-template name="PRINT_APPLICATION_DATE"/>-->
+                <RECORD_START_DATE>
+                    <xsl:value-of select="ref:toXsdDate(@date,'dd-MMM-yyyy')"/>
+                </RECORD_START_DATE>
+
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@id"/>
+                </RECORD_EXTERNAL_REFERENCE>
+
+                <VESSEL_IMO>
+                    <xsl:value-of select="IdentificationDetails/IDType[@code='16']/IDTypeValue/IDValue"/>
+                </VESSEL_IMO>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_PRIMARY_NAME"/>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_ALIASES"/>
+
+                <xsl:call-template name="PRINT_CATEG_SANCTION_TYPE_DESCR3"/>
+
+                <xsl:call-template name="PRINT_ADDRESSES"/>
+
+                <xsl:call-template name="PRINT_VESSEL_INFORMATION"/>
+
+                <xsl:call-template name="PRINT_ENTITY_VESSEL_DATE_REGISTRATION"/>
+
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS"/>
+
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+
+                <xsl:call-template name="PRINT_SANCTION_REFERENCES_WITH_QUESTION_PLACEHOLDER_FOR_MISSING_DATES"/>
+
+                <xsl:call-template name="PRINT_SOURCES"/>
+
+                <xsl:for-each select="CountryDetails/CountryType[@code='3' or @code='4']">
+                    <xsl:call-template name="PRINT_COUNTRY_DETAILS"/>
+                </xsl:for-each>
+            </VESSEL>
+        </root>
+    </xsl:template>
+
+    <xsl:template name="join">
+        <xsl:param name="list"/>
+        <xsl:param name="separator"/>
+        <xsl:for-each select="$list">
+            <xsl:value-of select="normalize-space(.)"/>
+            <xsl:if test="position() != last()">
+                <xsl:value-of select="$separator"/>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ACTION_NAME">
+        <xsl:if test="@recordaction ='add'">CREATE</xsl:if>
+        <xsl:if test="@recordaction ='chg'">UPDATE</xsl:if>
+        <xsl:if test="@recordaction ='del'">DELETE</xsl:if>
+        <xsl:if test="@recordaction ='unchg'">UNCHANGED</xsl:if>
+        <xsl:if test="@recordaction ='rev'">REV</xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_APPLICATION_DATE">
+        <xsl:variable name="sinceDates">
+            <xsl:for-each select="SanctionsReferences/Reference/ReferenceValue">
+                <xsl:variable name="sinceDate" select="ref:applyQuestionRuleOnDate(@SinceDay,@SinceMonth,@SinceYear)"/>
+                <xsl:choose>
+                    <xsl:when test="position() = 1">
+                        <xsl:value-of select="$sinceDate"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        ;<xsl:value-of select="$sinceDate"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </xsl:variable>
+        <!--                <RECORD_START_DATE>-->
+        <!--            <xsl:value-of select="ref:computeApplicationDate($ref, $sinceDates)"/>-->
+        <!--        </RECORD_START_DATE>-->
+    </xsl:template>
+
+    <xsl:template name="PRINT_GENDERS">
+        <xsl:for-each select="GenderDetails/Gender">
+            <PERSON_GENDER>
+                <xsl:value-of
+                        select="ref:resolveRefInDbByLabel($ref, 'GENDER', GenderValue)"/>
+            </PERSON_GENDER>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_IDENTITY_DOCUMENTS">
+        <xsl:for-each select="IdentificationDetails/IDType">
+            <xsl:if test="contains(concat(' ', $programCodes, ' '), concat(' ', @code, ' ')) = 0 and
+                            contains(concat(' ', $bicCodes, ' '), concat(' ', @code, ' ')) = 0">
+                <xsl:variable name="identityDocumentType"
+                              select="ref:resolveRefInDbByCode($ref, 'IDENTITY_DOCUMENT_TYPE', @code)"/>
+                <xsl:for-each select="IDTypeValue">
+                    <IDENTITY>
+                        <RECORD_IDENTITY_DOCUMENT_TYPE>
+                            <xsl:value-of select="$identityDocumentType"/>
+                        </RECORD_IDENTITY_DOCUMENT_TYPE>
+                        <RECORD_IDENTITY_DOCUMENT_NUMBER>
+                            <xsl:value-of select="IDValue"/>
+                        </RECORD_IDENTITY_DOCUMENT_NUMBER>
+                        <RECORD_IDENTITY_DOCUMENT_ADDITIONAL_INFO>
+                            <xsl:value-of select="IDValue/@IDNotes"/>
+                        </RECORD_IDENTITY_DOCUMENT_ADDITIONAL_INFO>
+                        <RECORD_IDENTITY_DOCUMENT_REFFERENCE_GROUP>
+                            <xsl:value-of select="ReferenceGroup/@ReferenceGroupCode"/>
+                        </RECORD_IDENTITY_DOCUMENT_REFFERENCE_GROUP>
+                    </IDENTITY>
+                </xsl:for-each>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_PROGRAMS">
+        <xsl:for-each select="IdentificationDetails/IDType">
+            <xsl:if test="contains(concat(' ', $programCodes, ' '), concat(' ', @code, ' '))">
+                <xsl:variable name="programType"
+                              select="ref:resolveRefInDbByCode($ref, 'PROGRAM_SANCTION_TYPE', @code)"/>
+                <xsl:for-each select="IDTypeValue">
+                    <PROGRAM>
+                        <RECORD_PROGRAM_SANCTION_TYPE>
+                            <xsl:value-of select="$programType"/>
+                        </RECORD_PROGRAM_SANCTION_TYPE>
+                        <RECORD_PROGRAM_LABEL>
+                            <xsl:value-of select="IDValue"/>
+                        </RECORD_PROGRAM_LABEL>
+                        <RECORD_PROGRAM_DESCRIPTION>
+                            <xsl:value-of select="substring(IDValue/@IDNotes, 1, 2048)"/>
+                        </RECORD_PROGRAM_DESCRIPTION>
+                        <RECORD_PROGRAM_REFFERENCE_GROUP>
+                            <xsl:value-of select="ReferenceGroup/@ReferenceGroupCode"/>
+                        </RECORD_PROGRAM_REFFERENCE_GROUP>
+                    </PROGRAM>
+                </xsl:for-each>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ADDRESSES">
+        <xsl:for-each select="AddressDetails/Address/AddressValue">
+            <xsl:if test="AddressLine or AddressCity or AddressState or ZipCode or AddressCountry">
+                <ADDRESS>
+                    <RECORD_ADDRESS_ADDRESS>
+                        <xsl:value-of select="AddressLine"/>
+                    </RECORD_ADDRESS_ADDRESS>
+                    <RECORD_ADDRESS_CITY>
+                        <xsl:value-of select="AddressCity"/>
+                    </RECORD_ADDRESS_CITY>
+                    <RECORD_ADDRESS_STATE>
+                        <xsl:value-of select="AddressState"/>
+                    </RECORD_ADDRESS_STATE>
+                    <RECORD_ADDRESS_ZIP_CODE>
+                        <xsl:value-of select="ZipCode"/>
+                    </RECORD_ADDRESS_ZIP_CODE>
+                    <RECORD_ADDRESS_COUNTRY>
+                        <xsl:value-of select="ref:resolveRefInDbByCode($ref, 'COUNTRY', AddressCountry)"/>
+                    </RECORD_ADDRESS_COUNTRY>
+                </ADDRESS>
+            </xsl:if>
+        </xsl:for-each>
+
+    </xsl:template>
+
+    <xsl:template name="PRINT_COUNTRY_DETAILS">
+        <xsl:variable name="countryType" select="ref:resolveRefInDbByCode($ref, 'COUNTRY_TYPE', @code)"/>
+        <xsl:for-each select="CountryTypeValue">
+            <COUNTRY_DETAILS>
+                <RECORD_COUNTRY_DETAILS_TYPE>
+                    <xsl:value-of select="$countryType"/>
+                </RECORD_COUNTRY_DETAILS_TYPE>
+                <RECORD_COUNTRY_DETAILS_BIRTH_COUNTRY>
+                    <xsl:value-of select="ref:resolveRefInDbByCode($ref, 'COUNTRY', CountryValue/@code)"/>
+                </RECORD_COUNTRY_DETAILS_BIRTH_COUNTRY>
+            </COUNTRY_DETAILS>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_SANCTION_REFERENCES_WITH_QUESTION_PLACEHOLDER_FOR_MISSING_DATES">
+        <xsl:for-each select="SanctionsReferences/Reference/ReferenceValue">
+            <SANCTION_REFERENCE>
+                <RECORD_SANCTION_REFERENCE_LIST_NAME>
+                    <xsl:value-of select="ref:resolveRefInFileByCode($ref, ., 'SANCTION_REFERENCE')"/>
+                </RECORD_SANCTION_REFERENCE_LIST_NAME>
+                <RECORD_SANCTION_REFERENCE_SINCE_DATE>
+                    <xsl:value-of select="ref:applyQuestionRuleOnDate(@SinceDay,@SinceMonth,@SinceYear)"/>
+                </RECORD_SANCTION_REFERENCE_SINCE_DATE>
+                <RECORD_SANCTION_REFERENCE_END_DATE>
+                    <xsl:value-of select="ref:applyQuestionRuleOnDate(@ToDay,@ToMonth,@ToYear)"/>
+                </RECORD_SANCTION_REFERENCE_END_DATE>
+            </SANCTION_REFERENCE>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_CATEG_SANCTION_TYPE_DESCR3">
+        <xsl:for-each select="Descriptions/Description">
+            <xsl:if test="@Description1 != ''">
+                <xsl:variable name="description1Id"
+                              select="ref:resolveRefInDbByCode($ref, 'RECORD_CATEGORY', string(@Description1))"/>
+                <RECORD_CATEGORY>
+                    <xsl:value-of select="$description1Id"/>
+                </RECORD_CATEGORY>
+                <xsl:if test="@Description2 != ''">
+                    <xsl:variable name="description2Id"
+                                  select="ref:resolveRefInDbByCodeAndParent($ref, 'SANCTION_TYPE', string(@Description2), string(@Description1), $description1Id)"/>
+                    <RECORD_SANCTION_TYPE>
+                        <xsl:value-of select="$description2Id"/>
+                    </RECORD_SANCTION_TYPE>
+                    <xsl:if test="@Description3 != ''">
+                        <RECORD_DESCRIPTION3>
+                            <xsl:value-of
+                                    select="ref:resolveRefInDbByCodeAndParent($ref, 'DESCRIPTION3', string(@Description3), string(@Description2), $description2Id)"/>
+                        </RECORD_DESCRIPTION3>
+                    </xsl:if>
+                </xsl:if>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+    <xsl:template name="PRINT_KEYWORDS">
+        <RECORD_KEYWORDS>
+            <xsl:variable name="keywords">
+                <xsl:for-each select="ActiveStatusDetails/ActiveStatus/ReferenceGroup">
+                    <xsl:variable name="sanctionRefName"
+                                  select="@ReferenceGroupCode"/>
+                    <xsl:value-of select="$sanctionRefName"/>
+                    <xsl:if test="$sanctionRefName != '' and position() != last()">
+                        <xsl:value-of select="', '"/>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:variable>
+            <xsl:value-of select="substring($keywords, 1, 255)"/> <!-- if we'll implement a generic truncation method, this substring will
+                be removed -->
+        </RECORD_KEYWORDS>
+    </xsl:template>
+    <xsl:template name="PRINT_ENTITY_RECORD_NAME">
+        <RECORD_NAME>
+            <xsl:choose>
+                <xsl:when test="EntityNameDetails/EntityNames[@id='Name1']/EntityNameValue/EntityName != ''">
+                    <xsl:value-of
+                            select="normalize-space(concat(EntityNameDetails/EntityNames[@id='Name1']/EntityNameValue/Prefix, ' ',
+                            EntityNameDetails/EntityNames[@id='Name1']/EntityNameValue/EntityName, ' ', EntityNameDetails/EntityNames[@id='Name1']/EntityNameValue/Suffix))"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of
+                            select="normalize-space(concat(EntityNameDetails/EntityNames[@id='SingleStringName1']/EntityNameValue/Prefix, ' ',
+                            EntityNameDetails/EntityNames[@id='SingleStringName1']/EntityNameValue/SingleStringName, ' ', EntityNameDetails/EntityNames[@id='SingleStringName1']/EntityNameValue/Suffix))"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </RECORD_NAME>
+    </xsl:template>
+
+    <xsl:template name="PRINT_SOURCES">
+        <xsl:for-each select="SourceDetails/Source/SourceValue">
+            <SOURCE>
+                <RECORD_SOURCE_NAME>
+                    <xsl:value-of select="@name"/>
+                </RECORD_SOURCE_NAME>
+            </SOURCE>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_PERSON_DATE_DETAILS">
+        <xsl:for-each
+                select="DateDetails/DateType[@code='1' or @code='2']/DateTypeValue">
+            <PERSON_BIOGRAPHY>
+                <RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                    <xsl:value-of
+                            select="ref:applyQuestionRuleOnDate(DateValue/@Day, DateValue/@Month, DateValue/@Year)"/>
+                </RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                <RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                    <xsl:value-of select="DateValue/@DateNotes"/>
+                </RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                <RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+                    <xsl:value-of
+                            select="ref:resolveRefInDbByCode($ref, 'DATE_TYPE', ../@code)"/>
+                </RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+            </PERSON_BIOGRAPHY>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_BIRTH_PLACE">
+        <xsl:for-each select="BirthPlaceDetails/BirthPlace">
+            <PERSON_BIOGRAPHY>
+
+                <RECORD_PERSON_BIOGRAPHY_BIRTH_PLACE>
+                    <xsl:value-of select="PlaceValue/@name"/>
+                    <!--normalize space is used for checking empty values, comparing directly with variable will not work-->
+                    <xsl:if test="PlaceValue/@County != '' and normalize-space(PlaceValue/@name) = ''">
+                        <xsl:value-of select="PlaceValue/@County"/>
+                    </xsl:if>
+                    <xsl:if test="PlaceValue/@County != '' and normalize-space(PlaceValue/@name) != ''">
+                        <xsl:value-of select="concat(', ', PlaceValue/@County)"/>
+                    </xsl:if>
+                    <xsl:if test="PlaceValue/@State != '' and normalize-space(concat(PlaceValue/@name, PlaceValue/@County)) = ''">
+                        <xsl:value-of select="PlaceValue/@State"/>
+                    </xsl:if>
+                    <xsl:if test="PlaceValue/@State != '' and normalize-space(concat(PlaceValue/@name, PlaceValue/@County)) != ''">
+                        <xsl:value-of select="concat(', ', PlaceValue/@State)"/>
+                    </xsl:if>
+                </RECORD_PERSON_BIOGRAPHY_BIRTH_PLACE>
+                <RECORD_PERSON_BIOGRAPHY_BIRTH_COUNTRY>
+                    <xsl:value-of
+                            select="ref:resolveRefInDbByCode($ref, 'COUNTRY', PlaceValue/@RegionCode)"/>
+                </RECORD_PERSON_BIOGRAPHY_BIRTH_COUNTRY>
+            </PERSON_BIOGRAPHY>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_PRIMARY_NAME_PERSON">
+        <xsl:variable name="primaryNameId">
+            <xsl:call-template name="PRIMARY_NAME_ID_PERSON"/>
+        </xsl:variable>
+        <xsl:variable name="nameValue" select="PersonNameDetails/PersonNames[@id=normalize-space($primaryNameId)]/PersonNameValue"/>
+
+
+        <xsl:choose>
+            <xsl:when test="normalize-space($primaryNameId) = 'SingleStringName1'">
+                <PERSON_FIRST_NAME/>
+                <PERSON_MIDDLE_NAME/>
+                <PERSON_LAST_NAME>
+                    <xsl:value-of select="normalize-space($nameValue/SingleStringName)"/>
+                </PERSON_LAST_NAME>
+                <PERSON_SUFFIX/>
+                <PERSON_MAIDEN_NAME/>
+                <PERSON_TITLE/>
+                <RECORD_NAME>
+                    <xsl:value-of select="normalize-space($nameValue/SingleStringName)"/>
+                </RECORD_NAME>
+            </xsl:when>
+
+            <xsl:when test="normalize-space($primaryNameId) = 'OriginalScriptName1'">
+                <PERSON_FIRST_NAME/>
+                <PERSON_MIDDLE_NAME/>
+                <PERSON_LAST_NAME>
+                    <xsl:value-of select="normalize-space($nameValue/OriginalScriptName)"/>
+                </PERSON_LAST_NAME>
+                <PERSON_SUFFIX/>
+                <PERSON_MAIDEN_NAME/>
+                <PERSON_TITLE/>
+                <RECORD_NAME>
+                    <xsl:value-of select="normalize-space($nameValue/OriginalScriptName)"/>
+                </RECORD_NAME>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="title" select="$nameValue/TitleHonorific"></xsl:variable>
+                <xsl:variable name="lastName" select="$nameValue/Surname"></xsl:variable>
+                <xsl:variable name="suffix" select="$nameValue/Suffix"></xsl:variable>
+                <xsl:variable name="firstName" select="$nameValue/FirstName"></xsl:variable>
+                <xsl:variable name="middleName" select="$nameValue/MiddleName"></xsl:variable>
+
+                <PERSON_FIRST_NAME>
+                    <xsl:value-of select="normalize-space($firstName)"/>
+                </PERSON_FIRST_NAME>
+                <PERSON_MIDDLE_NAME>
+                    <xsl:value-of select="normalize-space($middleName)"/>
+                </PERSON_MIDDLE_NAME>
+                <PERSON_LAST_NAME>
+                    <xsl:value-of select="normalize-space($lastName)"/>
+                </PERSON_LAST_NAME>
+                <PERSON_SUFFIX>
+                    <xsl:value-of select="normalize-space($suffix)"/>
+                </PERSON_SUFFIX>
+                <PERSON_MAIDEN_NAME>
+                    <xsl:value-of select="$nameValue/MaidenName"/>
+                </PERSON_MAIDEN_NAME>
+                <PERSON_TITLE>
+                    <xsl:value-of select="$title"/>
+                </PERSON_TITLE>
+                <RECORD_NAME>
+                    <xsl:value-of
+                            select="normalize-space(concat($firstName, ' ', $middleName,' ', $lastName, ' ', $suffix))"/>
+                </RECORD_NAME>
+                <xsl:if test="$suffix != ''">
+                    <xsl:call-template name="PRINT_COMPLIMENTARY_AKA_FOR_PRIMARY_NAME">
+                        <xsl:with-param name="lastName" select="$lastName"/>
+                        <xsl:with-param name="firstName" select="$firstName"/>
+                        <xsl:with-param name="middleName" select="$middleName"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:for-each select="$nameValue/OriginalScriptName">
+        <xsl:if test="normalize-space($primaryNameId)!='OriginalScriptName1'">
+            <xsl:call-template name="PRINT_ORIGINAL_SCRIPT_NAME">
+
+                <xsl:with-param name="aliasQuality" select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_STRONG')"/>
+                <xsl:with-param name="value" select="."/>
+                <xsl:with-param name="language" select="@OSNLanguageCode"/>
+                <xsl:with-param name="isPerson" select="'yes'"/>
+            </xsl:call-template>
+        </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="FULL_NAME_WITH_SUFFIX">
+        <xsl:param name="nameValue"/>
+        <xsl:param name="lastName"/>
+        <xsl:value-of
+                select="normalize-space(concat($nameValue/FirstName, ' ', $nameValue/MiddleName,' ', $lastName, ' ', $nameValue/Suffix))"/>
+    </xsl:template>
+
+    <xsl:template name="FULL_NAME_WITHOUT_SUFFIX">
+        <xsl:param name="nameValue"/>
+        <xsl:param name="lastName"/>
+        <xsl:value-of
+                select="normalize-space(concat($nameValue/FirstName, ' ', $nameValue/MiddleName,' ', $lastName))"/>
+    </xsl:template>
+
+    <xsl:template name="PRINT_COMPLIMENTARY_AKA_FOR_PRIMARY_NAME">
+
+        <xsl:param name="lastName"/>
+        <xsl:param name="firstName"/>
+        <xsl:param name="middleName"/>
+        <ALIAS>
+            <RECORD_ALIAS_FIRST_NAME>
+                <xsl:value-of select="$firstName"/>
+            </RECORD_ALIAS_FIRST_NAME>
+            <RECORD_ALIAS_LAST_NAME>
+                <xsl:value-of select="$lastName"/>
+            </RECORD_ALIAS_LAST_NAME>
+            <RECORD_ALIAS_MIDDLE_NAME>
+                <xsl:value-of select="$middleName"/>
+            </RECORD_ALIAS_MIDDLE_NAME>
+            <RECORD_ALIAS_SUFFIX/>
+            <RECORD_ALIAS_FULL_NAME>
+                <xsl:value-of select="normalize-space(concat($firstName, ' ', $middleName,' ', $lastName))"/>
+            </RECORD_ALIAS_FULL_NAME>
+            <RECORD_ALIAS_QUALITY>
+                <xsl:value-of
+                        select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_STRONG')"/>
+            </RECORD_ALIAS_QUALITY>
+            <RECORD_ALIAS_TITLE/>
+            <RECORD_ALIAS_TYPE>
+                <xsl:value-of select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_TYPE', 'ALIAS_TYPE_AKA')"/>
+            </RECORD_ALIAS_TYPE>
+        </ALIAS>
+    </xsl:template>
+
+    <xsl:template name="PRINT_COMPLIMENTARY_ALIASES_FOR_ALL_MAIDEN_NAMES_PERSON">
+        <xsl:variable name="primaryNameId">
+            <xsl:call-template name="PRIMARY_NAME_ID_PERSON"/>
+        </xsl:variable>
+        <xsl:variable name="maidenNames"
+                      select="PersonNameDetails/PersonNames[@id != $primaryNameId]/PersonNameValue/MaidenName"/>
+        <xsl:for-each select="$maidenNames">
+            <xsl:variable name="maidenName" select="."/>
+            <xsl:if test="$maidenName!=''">
+                <xsl:call-template name="PRINT_COMPLIMENTARY_MAIDEN_NAME_ALIASES_PERSON">
+                    <xsl:with-param name="maidenName" select="$maidenName"/>
+                </xsl:call-template>
+                <!--Complimentary weak aka for maiden name as last name-->
+                <xsl:call-template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON">
+                    <xsl:with-param name="nameValue" select="$maidenName/.."/>
+                    <xsl:with-param name="lastName" select="$maidenName"/>
+                    <xsl:with-param name="withSuffix" select="false()"/>
+                    <xsl:with-param name="complimentaryWeakAka" select="true()"/>
+                    <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="false()"/>
+                </xsl:call-template>
+            </xsl:if>
+        </xsl:for-each>
+
+    </xsl:template>
+
+    <xsl:template name="PRINT_COMPLIMENTARY_MAIDEN_NAME_ALIASES_PERSON">
+        <xsl:param name="maidenName"/>
+        <xsl:for-each select="/Person/PersonNameDetails/PersonNames/PersonNameValue">
+            <xsl:variable name="currentName" select="."/>
+            <xsl:if test="normalize-space($currentName/MaidenName) = '' and starts-with(../@id, 'Name')">
+                <xsl:variable name="lastName">
+                    <xsl:value-of select="$currentName/Surname"></xsl:value-of>
+                </xsl:variable>
+                <xsl:call-template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON">
+                    <xsl:with-param name="nameValue" select="$currentName"/>
+                    <xsl:with-param name="lastName" select="normalize-space(concat($maidenName, ' ', $lastName))"/>
+                    <xsl:with-param name="withSuffix" select="true()"/>
+                    <xsl:with-param name="complimentaryWeakAka" select="false()"/>
+                    <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="true()"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON">
+                    <xsl:with-param name="nameValue" select="$currentName"/>
+                    <xsl:with-param name="lastName" select="normalize-space($maidenName)"/>
+                    <xsl:with-param name="withSuffix" select="true()"/>
+                    <xsl:with-param name="complimentaryWeakAka" select="false()"/>
+                    <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="true()"/>
+                </xsl:call-template>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="MAP_ALIAS_LAST_NAME_PERSON">
+        <xsl:param name="nameValue"/>
+        <xsl:param name="withSuffix"/>
+        <xsl:variable name="suffix">
+            <xsl:choose>
+                <xsl:when test="boolean($withSuffix)">
+                    <xsl:value-of select="$nameValue/Suffix"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="''"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:choose>
+            <!--normalize-space(variable) = '', normalize-space is used to convert var to string so the equality check returns true if no value was present -->
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) = '' and normalize-space($nameValue/FirstName) != '' and normalize-space($nameValue/MiddleName) != '' and
+                    normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) = ''">
+                <xsl:value-of select="normalize-space(concat($nameValue/FirstName, ' ', $nameValue/MiddleName))"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) = '' and normalize-space($nameValue/FirstName) != '' and normalize-space($nameValue/MiddleName) = '' and
+                    normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) = ''">
+                <xsl:value-of select="normalize-space($nameValue/FirstName)"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) = '' and normalize-space($nameValue/FirstName) = '' and normalize-space($nameValue/MiddleName) != ''
+                    and normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) = ''">
+                <xsl:value-of select="normalize-space($nameValue/MiddleName)"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) = '' and normalize-space($nameValue/FirstName) = '' and normalize-space($nameValue/MiddleName) != ''
+                    and normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) != ''">
+                <xsl:value-of select="normalize-space(concat($nameValue/MiddleName, ' ', $suffix))"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) = '' and normalize-space($nameValue/FirstName) != '' and normalize-space($nameValue/MiddleName) = ''
+                    and normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) != ''">
+                <xsl:value-of select="normalize-space(concat($nameValue/FirstName, ' ', $suffix))"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space($nameValue/TitleHonorific) != '' and normalize-space($nameValue/FirstName) != '' and normalize-space($nameValue/MiddleName) = ''
+                    and normalize-space($nameValue/Surname) = '' and normalize-space($nameValue/Suffix) = ''">
+                <xsl:value-of select="normalize-space($nameValue/FirstName)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space(concat($nameValue/Surname, ' ', $suffix))"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="PRINT_NAME_DETAILS_FOR_DEBUG">
+        <xsl:param name="nameValue"/>
+        <TITLE>
+            <xsl:value-of select="normalize-space($nameValue/TitleHonorific) != ''"/>
+            <xsl:value-of select="$nameValue/TitleHonorific"/>
+        </TITLE>
+        <FIRST_NAME>
+            <xsl:value-of select="normalize-space($nameValue/FirstName) != ''"/>
+            <xsl:value-of select="$nameValue/FirstName"/>
+        </FIRST_NAME>
+        <MIDDLE_NAME>
+            <xsl:value-of select="normalize-space($nameValue/MiddleName) != ''"/>
+            <xsl:value-of select="$nameValue/MiddleName"/>
+        </MIDDLE_NAME>
+        <SURNAME>
+            <xsl:value-of select="normalize-space($nameValue/Surname) != ''"/>
+            <xsl:value-of select="$nameValue/Surname"/>
+        </SURNAME>
+        <SUFFIX>
+            <xsl:value-of select="normalize-space($nameValue/Suffix) != ''"/>
+            <xsl:value-of select="$nameValue/Suffix"/>
+        </SUFFIX>
+    </xsl:template>
+
+
+    <xsl:template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON">
+        <xsl:param name="nameValue"/>
+        <xsl:param name="lastName"/>
+        <xsl:param name="withSuffix"/>
+        <xsl:param name="complimentaryWeakAka"/>
+        <xsl:param name="lastNameConcatenatedWithMaidenName"/>
+
+        <ALIAS>
+            <RECORD_ALIAS_FIRST_NAME>
+                <xsl:value-of select="$nameValue/FirstName"/>
+            </RECORD_ALIAS_FIRST_NAME>
+            <RECORD_ALIAS_MIDDLE_NAME>
+                <xsl:value-of select="$nameValue/MiddleName"/>
+            </RECORD_ALIAS_MIDDLE_NAME>
+
+
+            <xsl:choose>
+                <xsl:when
+                        test="ref:shouldNamePartsOtherThanLastNameBeCompleted($nameValue/TitleHonorific, $nameValue/FirstName, $nameValue/MiddleName, $nameValue/Surname, $nameValue/Suffix)">
+
+
+                    <RECORD_ALIAS_TITLE>
+                        <xsl:value-of select="$nameValue/TitleHonorific"/>
+                    </RECORD_ALIAS_TITLE>
+                </xsl:when>
+
+                <xsl:when
+                        test="ref:shouldTitleNameBeCompleted($nameValue/TitleHonorific, $nameValue/FirstName, $nameValue/MiddleName, $nameValue/Surname, $nameValue/Suffix)">
+
+
+                    <RECORD_ALIAS_TITLE>
+                        <xsl:value-of select="$nameValue/TitleHonorific"/>
+                    </RECORD_ALIAS_TITLE>
+                </xsl:when>
+
+                <xsl:otherwise>
+                    <RECORD_ALIAS_TITLE/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <RECORD_ALIAS_LAST_NAME>
+                <xsl:value-of select="$lastName"/>
+            </RECORD_ALIAS_LAST_NAME>
+            <xsl:choose>
+                <xsl:when test="boolean($withSuffix) and boolean($lastNameConcatenatedWithMaidenName)">
+                    <RECORD_ALIAS_FULL_NAME>
+                        <!--Suffix is already appended to last name here-->
+                        <xsl:call-template name="FULL_NAME_WITHOUT_SUFFIX">
+                            <xsl:with-param name="nameValue" select="$nameValue"/>
+                            <xsl:with-param name="lastName" select="$lastName"/>
+                        </xsl:call-template>
+                    </RECORD_ALIAS_FULL_NAME>
+                    <RECORD_ALIAS_SUFFIX>
+                        <xsl:value-of select="$nameValue/Suffix"/>
+                    </RECORD_ALIAS_SUFFIX>
+                </xsl:when>
+                <xsl:when test="boolean($withSuffix) and not($lastNameConcatenatedWithMaidenName)">
+                    <RECORD_ALIAS_FULL_NAME>
+                        <xsl:call-template name="FULL_NAME_WITH_SUFFIX">
+                            <xsl:with-param name="nameValue" select="$nameValue"/>
+                            <xsl:with-param name="lastName" select="$lastName"/>
+                        </xsl:call-template>
+                    </RECORD_ALIAS_FULL_NAME>
+                    <RECORD_ALIAS_SUFFIX>
+                        <xsl:value-of select="$nameValue/Suffix"/>
+                    </RECORD_ALIAS_SUFFIX>
+                </xsl:when>
+                <xsl:otherwise>
+                    <RECORD_ALIAS_FULL_NAME>
+                        <xsl:call-template name="FULL_NAME_WITHOUT_SUFFIX">
+                            <xsl:with-param name="nameValue" select="$nameValue"/>
+                            <xsl:with-param name="lastName" select="$lastName"/>
+                        </xsl:call-template>
+                    </RECORD_ALIAS_FULL_NAME>
+                    <RECORD_ALIAS_SUFFIX/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="boolean($complimentaryWeakAka)">
+                    <RECORD_ALIAS_TYPE>
+                        <xsl:value-of
+                                select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_TYPE', 'ALIAS_TYPE_LOW_QUALITY_AKA')"/>
+                    </RECORD_ALIAS_TYPE>
+                    <RECORD_ALIAS_QUALITY>
+                        <xsl:value-of
+                                select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_WEAK')"/>
+                    </RECORD_ALIAS_QUALITY>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="PRINT_ALIAS_TYPE">
+                        <xsl:with-param name="nameValue" select="$nameValue"/>
+                    </xsl:call-template>
+                </xsl:otherwise>
+            </xsl:choose>
+        </ALIAS>
+    </xsl:template>
+
+    <xsl:template name="PRIMARY_NAME_ID_PERSON">
+        <xsl:variable name="possiblePrimaryNameId1"
+                      select="PersonNameDetails/PersonNames[@id = 'Name1']/PersonNameValue"/>
+        <xsl:variable name="possiblePrimaryNameId2"
+                      select="PersonNameDetails/PersonNames[@id = 'Name2']/PersonNameValue"/>
+        <xsl:choose>
+            <xsl:when test="normalize-space($possiblePrimaryNameId1/FirstName) != '' or normalize-space($possiblePrimaryNameId1/MiddleName) != ''
+            or normalize-space($possiblePrimaryNameId1/Surname) != '' or normalize-space($possiblePrimaryNameId1/Suffix) != '' or normalize-space($possiblePrimaryNameId1/Title) != ''">
+                <xsl:value-of select="'Name1'"/>
+            </xsl:when>
+            <xsl:when test="normalize-space($possiblePrimaryNameId2/FirstName) != '' or normalize-space($possiblePrimaryNameId2/MiddleName) != ''
+            or normalize-space($possiblePrimaryNameId2/Surname) != '' or normalize-space($possiblePrimaryNameId2/Suffix) != '' or normalize-space($possiblePrimaryNameId2/Title) != ''">
+                <xsl:value-of select="'Name2'"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space(PersonNameDetails/PersonNames[@id = 'OriginalScriptName1']/PersonNameValue/OriginalScriptName)!=''">
+                <xsl:value-of select="'OriginalScriptName1'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="'SingleStringName1'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ALIASES_PERSON">
+        <xsl:variable name="primaryNameId">
+            <xsl:call-template name="PRIMARY_NAME_ID_PERSON"/>
+        </xsl:variable>
+
+        <xsl:variable name="primaryNameIdExcludingSingleStringName">
+            <xsl:choose>
+                <xsl:when test="starts-with(normalize-space($primaryNameId), 'SingleStringName')">
+                    <xsl:value-of select="''"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$primaryNameId"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:for-each select="PersonNameDetails/PersonNames[@id != $primaryNameIdExcludingSingleStringName and @id != 'Name1' and not(starts-with(@id, 'OriginalScriptName'))]/PersonNameValue/OriginalScriptName">
+
+                <xsl:variable name="aliasQuality">
+                    <xsl:call-template name="PRINT_ALIAS_QUALITY_ON_ID">
+                        <xsl:with-param name="aliasId" select="@id"></xsl:with-param>
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:call-template name="PRINT_ORIGINAL_SCRIPT_NAME">
+
+                    <xsl:with-param name="aliasQuality" select="$aliasQuality"/>
+                    <xsl:with-param name="value" select="."/>
+                    <xsl:with-param name="language" select="@OSNLanguageCode"/>
+                    <xsl:with-param name="isPerson" select="'yes'"/>
+                </xsl:call-template>
+
+        </xsl:for-each>
+        <xsl:for-each
+                select="PersonNameDetails/PersonNames[@id != $primaryNameIdExcludingSingleStringName and @id != 'Name1']/PersonNameValue">
+
+            <xsl:variable name="currentName" select="."/>
+            <xsl:variable name="nameId" select="$currentName/../@id"/>
+            <xsl:choose>
+                <xsl:when
+                        test="(starts-with($nameId, 'Name') or starts-with($nameId, 'Low Quality AKA') or starts-with($nameId, 'Reclassified AKA')) and normalize-space($currentName/MaidenName) = ''">
+                    <xsl:call-template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON_WITH_NAME_PROCESSING_LOGIC_LAST_NAME">
+                        <xsl:with-param name="nameValue" select="$currentName"/>
+                        <xsl:with-param name="withSuffix" select="true()"/>
+                        <xsl:with-param name="complimentary" select="false()"/>
+                        <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="false()"/>
+                    </xsl:call-template>
+                    <!--Print complimentaryWeakAka weak aka with no suffix-->
+                    <xsl:if test="$currentName/Suffix != '' and (normalize-space($currentName/Surname) = '' or normalize-space($currentName/MiddleName) = '')">
+                        <xsl:call-template
+                                name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON_WITH_NAME_PROCESSING_LOGIC_LAST_NAME">
+                            <xsl:with-param name="nameValue" select="$currentName"/>
+                            <xsl:with-param name="withSuffix" select="false()"/>
+                            <xsl:with-param name="complimentary" select="true()"/>
+                            <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="false()"/>
+                        </xsl:call-template>
+                    </xsl:if>
+                </xsl:when>
+                <xsl:when test="starts-with($nameId, 'OriginalScriptName')">
+                    <xsl:call-template name="PRINT_ORIGINAL_SCRIPT_NAME_ALIAS_PERSON">
+                        <xsl:with-param name="nameValue" select="$currentName"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:when test="starts-with($nameId, 'SingleStringName')">
+                    <xsl:call-template name="PRINT_SINGLE_STRING_NAME_ALIAS_PERSON">
+                        <xsl:with-param name="nameValue" select="$currentName"/>
+                    </xsl:call-template>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:for-each>
+        <xsl:call-template name="PRINT_COMPLIMENTARY_ALIASES_FOR_ALL_MAIDEN_NAMES_PERSON"/>
+    </xsl:template>
+
+    <xsl:template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON_WITH_NAME_PROCESSING_LOGIC_LAST_NAME">
+        <xsl:param name="nameValue"/>
+        <xsl:param name="withSuffix"/>
+        <xsl:param name="complimentary"/>
+        <xsl:param name="lastNameConcatenatedWithMaidenName"/>
+        <xsl:variable name="lastName">
+            <xsl:value-of select="$nameValue/Surname"></xsl:value-of>
+        </xsl:variable>
+        <xsl:call-template name="PRINT_WEAK_OR_STRONG_ALIAS_PERSON">
+            <xsl:with-param name="nameValue" select="$nameValue"/>
+            <xsl:with-param name="lastName" select="$lastName"/>
+            <xsl:with-param name="withSuffix" select="boolean($withSuffix)"/>
+            <xsl:with-param name="complimentaryWeakAka" select="$complimentary"/>
+            <xsl:with-param name="lastNameConcatenatedWithMaidenName" select="$lastNameConcatenatedWithMaidenName"/>
+        </xsl:call-template>
+    </xsl:template>
+
+
+    <xsl:template name="PRINT_ORIGINAL_SCRIPT_NAME_ALIAS_PERSON">
+        <xsl:param name="nameValue"/>
+        <ALIAS>
+            <RECORD_ALIAS_FIRST_NAME/>
+            <RECORD_ALIAS_MIDDLE_NAME/>
+            <RECORD_ALIAS_LAST_NAME>
+                <xsl:value-of select="$nameValue/OriginalScriptName"/>
+            </RECORD_ALIAS_LAST_NAME>
+            <RECORD_ALIAS_TITLE/>
+            <RECORD_ALIAS_FULL_NAME/>
+            <xsl:if test="$nameValue/OriginalScriptName/@OSNLanguageCode !=''">
+            <RECORD_ALIAS_LANGUAGE><xsl:value-of select="$nameValue/OriginalScriptName/@OSNLanguageCode"/></RECORD_ALIAS_LANGUAGE>
+            </xsl:if>
+            <RECORD_ALIAS_SUFFIX/>
+            <xsl:call-template name="PRINT_ALIAS_TYPE">
+                <xsl:with-param name="nameValue" select="$nameValue"/>
+            </xsl:call-template>
+        </ALIAS>
+    </xsl:template>
+
+    <xsl:template name="PRINT_SINGLE_STRING_NAME_ALIAS_PERSON">
+        <xsl:param name="nameValue"/>
+        <ALIAS>
+            <RECORD_ALIAS_FIRST_NAME/>
+            <RECORD_ALIAS_MIDDLE_NAME/>
+            <RECORD_ALIAS_LAST_NAME>
+                <xsl:value-of select="$nameValue/SingleStringName"/>
+            </RECORD_ALIAS_LAST_NAME>
+            <RECORD_ALIAS_TITLE/>
+            <RECORD_ALIAS_FULL_NAME/>
+            <RECORD_ALIAS_SUFFIX/>
+            <xsl:call-template name="PRINT_ALIAS_TYPE">
+                <xsl:with-param name="nameValue" select="$nameValue"/>
+            </xsl:call-template>
+        </ALIAS>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ALIAS_TYPE">
+        <xsl:param name="nameValue"/>
+        <xsl:variable name="aliasId" select="$nameValue/../@id"/>
+        <xsl:variable name="aliasType"
+                      select="ref:resolveAliasType($ref, $aliasId)"/>
+        <xsl:variable name="aliasQuality">
+            <xsl:call-template name="PRINT_ALIAS_QUALITY_ON_ID">
+                <xsl:with-param name="aliasId" select="$aliasId"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <RECORD_ALIAS_TYPE>
+            <xsl:value-of select="$aliasType"/>
+        </RECORD_ALIAS_TYPE>
+        <RECORD_ALIAS_QUALITY>
+            <xsl:value-of select="$aliasQuality"/>
+        </RECORD_ALIAS_QUALITY>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ALIAS_QUALITY_ON_ID">
+        <xsl:param name="aliasId"/>
+
+        <xsl:choose>
+            <xsl:when
+                    test="starts-with($aliasId, 'Name') or starts-with($aliasId, 'OriginalScriptName') or starts-with($aliasId, 'SingleStringName')">
+                <xsl:value-of
+                        select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_STRONG')"/>
+            </xsl:when>
+            <xsl:when
+                    test="starts-with($aliasId, 'Reclassified AKA')">
+                <xsl:value-of
+                        select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_WEAK_REC')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of
+                        select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_WEAK')"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!--Primary name and aka logic for entity/vessel-->
+    <xsl:template name="PRINT_ENTITY_VESSEL_PRIMARY_NAME">
+        <xsl:variable name="primaryNameId">
+            <xsl:call-template name="PRIMARY_NAME_ID_ENTITY_VESSEL"/>
+        </xsl:variable>
+        <xsl:variable name="primaryName" select="EntityNameDetails/EntityNames[@id = $primaryNameId]/EntityNameValue"/>
+        <RECORD_NAME>
+            <xsl:call-template name="MAP_NAME_DETAILS_FOR_ENTITY_VESSEL_ACCORDING_TO_NAME_PROCESSING_LOGIC">
+                <xsl:with-param name="nameValue" select="$primaryName"/>
+            </xsl:call-template>
+        </RECORD_NAME>
+
+
+                <xsl:call-template name="PRINT_ORIGINAL_SCRIPT_NAME">
+
+                    <xsl:with-param name="aliasQuality" select="ref:resolveRefInDbByBusinessConcept($ref, 'ALIAS_QUALITY', 'ALIAS_QUALITY_STRONG')"/>
+                    <xsl:with-param name="value" select="."/>
+                    <xsl:with-param name="language" select="@OSNLanguageCode"/>
+                    <xsl:with-param name="isPerson" select="'no'"/>
+                </xsl:call-template>
+
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ENTITY_VESSEL_ALIASES">
+        <xsl:variable name="primaryNameId">
+            <xsl:call-template name="PRIMARY_NAME_ID_ENTITY_VESSEL"/>
+        </xsl:variable>
+        <xsl:for-each select="EntityNameDetails/EntityNames[@id != $primaryNameId and @id != 'Name1' and not(starts-with(@id, 'OriginalScriptName'))]/EntityNameValue/OriginalScriptName">
+
+            <xsl:variable name="aliasQuality">
+                <xsl:call-template name="PRINT_ALIAS_QUALITY_ON_ID">
+                    <xsl:with-param name="aliasId" select="$primaryNameId"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:call-template name="PRINT_ORIGINAL_SCRIPT_NAME">
+
+                <xsl:with-param name="aliasQuality" select="$aliasQuality"/>
+                <xsl:with-param name="value" select="."/>
+                <xsl:with-param name="language" select="@OSNLanguageCode"/>
+                <xsl:with-param name="isPerson" select="'no'"/>
+            </xsl:call-template>
+
+        </xsl:for-each>
+        <xsl:for-each select="EntityNameDetails/EntityNames[@id != $primaryNameId and @id != 'Name1']/EntityNameValue">
+            <ALIAS>
+                <RECORD_ALIAS_FIRST_NAME>
+                    <xsl:value-of select="./Prefix"/>
+                </RECORD_ALIAS_FIRST_NAME>
+                <xsl:if test="./OriginalScriptName/@OSNLanguageCode !=''">
+                <RECORD_ALIAS_LANGUAGE>
+                    <xsl:value-of select="./OriginalScriptName/@OSNLanguageCode"/>
+
+                </xsl:if>
+                <RECORD_ALIAS_MIDDLE_NAME>
+                    <xsl:value-of select="./EntityName"/>
+                </RECORD_ALIAS_MIDDLE_NAME>
+                <RECORD_ALIAS_LAST_NAME>
+                    <xsl:value-of select="./Suffix"/>
+                </RECORD_ALIAS_LAST_NAME>
+                <RECORD_ALIAS_FULL_NAME>
+                    <xsl:call-template name="MAP_NAME_DETAILS_FOR_ENTITY_VESSEL_ACCORDING_TO_NAME_PROCESSING_LOGIC">
+                        <xsl:with-param name="nameValue" select="."/>
+                    </xsl:call-template>
+                </RECORD_ALIAS_FULL_NAME>
+                <xsl:call-template name="PRINT_ALIAS_TYPE">
+                    <xsl:with-param name="nameValue" select="."/>
+                </xsl:call-template>
+            </ALIAS>
+
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRIMARY_NAME_ID_ENTITY_VESSEL">
+        <xsl:variable name="possiblePrimaryId1" select="EntityNameDetails/EntityNames[@id = 'Name1']"/>
+        <xsl:variable name="possiblePrimaryId2" select="EntityNameDetails/EntityNames[@id = 'Name2']"/>
+        <xsl:choose>
+            <xsl:when test="normalize-space($possiblePrimaryId1/EntityNameValue/Prefix) != ''
+            or normalize-space($possiblePrimaryId1/EntityNameValue/EntityName) != '' or normalize-space($possiblePrimaryId1/EntityNameValue/Suffix)">
+                <xsl:value-of select="'Name1'"/>
+            </xsl:when>
+            <xsl:when test="normalize-space($possiblePrimaryId2/EntityNameValue/Prefix) != ''
+            or normalize-space($possiblePrimaryId2/EntityNameValue/EntityName) != '' or normalize-space($possiblePrimaryId2/EntityNameValue/Suffix)">
+                <xsl:value-of select="'Name2'"/>
+            </xsl:when>
+            <xsl:when
+                    test="normalize-space(EntityNameDetails/EntityNames[@id = 'OriginalScriptName1']/EntityNameValue/OriginalScriptName) !=''">
+                <xsl:value-of select="'OriginalScriptName1'"/>
+            </xsl:when>
+            <xsl:otherwise>
+
+                <xsl:value-of select="'SingleStringName1'"/>
+            </xsl:otherwise>
+
+    </xsl:template>
+
+    <xsl:template name="MAP_NAME_DETAILS_FOR_ENTITY_VESSEL_ACCORDING_TO_NAME_PROCESSING_LOGIC">
+        <xsl:param name="nameValue"/>
+        <xsl:variable name="nameId" select="$nameValue/../@id"/>
+        <xsl:choose>
+            <xsl:when test="starts-with($nameId, 'Name') or starts-with($nameId, 'Low Quality AKA')">
+                <xsl:value-of
+                        select="normalize-space(concat($nameValue/Prefix, ' ', $nameValue/EntityName, ' ', $nameValue/Suffix))"/>
+            </xsl:when>
+            <xsl:when test="starts-with($nameId, 'OriginalScriptName')">
+                <xsl:value-of select="normalize-space($nameValue/OriginalScriptName)"/>
+            </xsl:when>
+            <xsl:when test="starts-with($nameId, 'SingleStringName')">
+                <xsl:value-of select="normalize-space($nameValue/SingleStringName)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="''"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="PRINT_VESSEL_INFORMATION">
+        <xsl:variable name="vesselInformation" select="VesselDetails/Vessels/VesselInformation"/>
+        <xsl:if test="$vesselInformation != ''">
+            <xsl:variable name="separator" select="';'"/>
+            <VESSEL_CALL_SIGN>
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$vesselInformation/VesselCallSign"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </VESSEL_CALL_SIGN>
+            <VESSEL_TYPE>
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$vesselInformation/VesselType"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </VESSEL_TYPE>
+            <VESSEL_TONNAGE>
+                <xsl:call-template name="CONCAT_NODES">
+
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </VESSEL_TONNAGE>
+            <VESSEL_GROSS_TONNAGE>
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$vesselInformation/VesselGRT"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </VESSEL_GROSS_TONNAGE>
+            <VESSEL_OWNER>
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$vesselInformation/VesselOwner"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </VESSEL_OWNER>
+            <xsl:variable name="vesselFlagCodes">
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$vesselInformation/VesselFlag"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <VESSEL_FLAG>
+                <xsl:value-of select="ref:resolveRefsInFileByCodes($ref, $vesselFlagCodes, 'COUNTRY', $separator)"/>
+            </VESSEL_FLAG>
+        </xsl:if>
+    </xsl:template>
+
+
+    <xsl:template name="PRINT_ENTITY_VESSEL_DATE_REGISTRATION">
+        <xsl:for-each
+                select="DateDetails/DateType[@code='3' or @code='6']/DateTypeValue">
+            <DATE_DETAILS>
+                <RECORD_DATE_DETAILS_DATE_VALUE>
+                    <xsl:value-of
+                            select="ref:applyQuestionRuleOnDate(DateValue/@Day, DateValue/@Month, DateValue/@Year)"/>
+                </RECORD_DATE_DETAILS_DATE_VALUE>
+                <RECORD_DATE_DETAILS_DATE_TYPE>
+                    <xsl:value-of
+                            select="ref:resolveRefInDbByLabel($ref, 'DATE_TYPE', ../@code)"/>
+                </RECORD_DATE_DETAILS_DATE_TYPE>
+
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="CONCAT_NODES">
+        <xsl:param name="list"/>
+        <xsl:param name="result" select="''"/>
+        <xsl:param name="separator" select="' '"/>
+        <xsl:choose>
+            <xsl:when test="$list">
+                <xsl:call-template name="CONCAT_NODES">
+                    <xsl:with-param name="list" select="$list[position() &gt; 1]"/>
+                    <xsl:with-param name="result" select="concat($result, $separator, $list[1])"/>
+                    <xsl:with-param name="separator" select="$separator"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="normalizedResult" select="normalize-space($result)"/>
+                <!--trim first separator-->
+                <xsl:value-of select="substring($normalizedResult, 2, string-length($normalizedResult))"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ORIGINAL_SCRIPT_NAME">
+        <xsl:param name="value"/>
+        <xsl:param name="language"/>
+        <xsl:param name="aliasQuality"/>
+        <xsl:param name="isPerson"/>
+
+        <ALIAS>
+            <xsl:if test="$isPerson='yes'">
+                <RECORD_ALIAS_LAST_NAME>
+                    <xsl:value-of select="$value"/>
+                </RECORD_ALIAS_LAST_NAME>
+            </xsl:if>
+            <xsl:if test="$isPerson ='no'">
+                <RECORD_ALIAS_FULL_NAME>
+                    <xsl:value-of select="$value"/>
+                </RECORD_ALIAS_FULL_NAME>
+            </xsl:if>
+            <RECORD_ALIAS_TYPE>
+                <xsl:value-of select="ref:resolveAliasType($ref, 'OriginalScriptName')"/>
+            </RECORD_ALIAS_TYPE>
+            <RECORD_ALIAS_QUALITY>
+                <xsl:value-of select="$aliasQuality"/>
+            </RECORD_ALIAS_QUALITY>
+            <RECORD_ALIAS_LANGUAGE>
+                <xsl:value-of select="$language"/>
+            </RECORD_ALIAS_LANGUAGE>
+        </ALIAS>
+
+    </xsl:template>
+</xsl:stylesheet>

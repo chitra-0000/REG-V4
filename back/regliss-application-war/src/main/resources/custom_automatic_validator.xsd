@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="list" type="listType"/>
+    <xs:complexType name="listType">
+        <xs:sequence>
+            <xs:element type="xs:date" name="applicationDate"/>
+            <xs:element type="xs:string" name="juridictionBase"/>
+            <xs:element type="xs:string" name="label"/>
+            <xs:element type="xs:string" name="sourceVersion"/>
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="recordsType" name="records"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="recordsType">
+        <xs:sequence>
+            <xs:element type="recordType" name="record" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="recordType">
+        <xs:sequence>
+            <xs:element type="generalInformationType" name="generalInformation" minOccurs="1"/>
+            <xs:element type="extraMigrationIDRefType" name="extraMigrationIDRef" minOccurs="0"/>
+            <xs:element type="extraIndividualRecordDetailType" name="extraIndividualRecordDetail" minOccurs="0"/>
+            <xs:element type="extraEntityRecordDetailType" name="extraEntityRecordDetail" minOccurs="0"/>
+            <xs:element type="extraVesselRecordDetailType" name="extraVesselRecordDetail" minOccurs="0"/>
+            <xs:element type="extraOtherRecordDetailType" name="extraOtherRecordDetail" minOccurs="0"/>
+            <xs:element type="extraCountryRecordDetailType" name="extraCountryRecordDetail" minOccurs="0"/>
+            <xs:element type="extraCityRecordDetailType" name="extraCityRecordDetail" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="applicationDate" use="optional"/>
+        <xs:attribute type="xs:string" name="deletionDate" use="optional"/>
+        <xs:attribute type="xs:string" name="externalReference" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="generalInformationType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="fullName"/>
+            <xs:element name="type"><!--[IBM] We need more elements in the enumeration: Seaport, Airport, City etc -->
+                <xs:simpleType><!--[BNPP] You can add as many values as u want to fit with your db -->
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Entity"/>
+                        <xs:enumeration value="Individual"/>
+                        <xs:enumeration value="Other"/>
+                        <xs:enumeration value="Country"/>
+                        <xs:enumeration value="Vessel"/>
+                        <xs:enumeration value="City"/>
+                        <xs:enumeration value="Seaport"/>
+                        <xs:enumeration value="Airport"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="xs:string" name="searchCode"/>
+            <xs:element type="xs:string" name="description"/><!--[IBM] This is a list in V4, not a String [ITG]: This is Reg.Record.Description (VARCHAR 300)-->
+            <xs:element type="xs:string" name="instruction"/>
+            <xs:element type="xs:string" name="comments"/>
+            <xs:element type="xs:string" name="notes"/>
+            <xs:element type="programsType" name="programs"/>
+            <xs:element type="sanctionsType" name="sanctions"/>
+            <xs:element type="sourcesType" name="sources"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraMigrationIDRefType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="recordIdV3"/>
+            <xs:element type="xs:string" name="referenceReglissV3"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraIndividualRecordDetailType">
+        <xs:sequence>
+            <!--[IBM] This is a list in V4 (referential), not a free String -->
+            <!--[BNPP] You can add as many values as u want to fit with your db or let this field as free string and pick the enum or default value at import -->
+            <xs:element type="xs:string" name="gender"/>
+            <xs:element type="xs:string" name="LastName"/>
+            <xs:element type="xs:string" name="middleName"/>
+            <xs:element type="xs:string" name="firstname"/>
+            <xs:element type="xs:string" name="suffix"/>
+            <xs:element type="xs:string" name="maidenName"/>
+            <xs:element type="xs:string" name="title"/>
+            <!--[IBM] This is a boolean in V4, not a free String -->
+            <!--[BNPP] There is null values so we can't set boolean-->
+            <xs:element type="xs:boolean" name="isDeceased" minOccurs="0"/>
+            <xs:element type="addressesType" name="addresses"/>
+            <xs:element type="identityDocumentsType" name="identityDocuments"/>
+            <xs:element type="countryDetailsType" name="countryDetails"/>
+            <xs:element type="datesDetailsType" name="datesDetails"/>
+            <xs:element type="aliasesType" name="aliases"/>
+            <xs:element type="functionsType" name="functions"/>
+            <xs:element type="codesType" name="codes"/>
+            <xs:element type="relationsType" name="relations"/>
+            <xs:element type="imagesType" name="images"/><!--[IBM] This is specific only to Persons in V4 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraEntityRecordDetailType">
+        <xs:sequence>
+            <xs:element type="addressesType" name="addresses"/>
+            <xs:element type="identityDocumentsType" name="identityDocuments"/>
+            <xs:element type="countryDetailsType" name="countryDetails"/>
+            <xs:element type="datesDetailsType" name="datesDetails"/>
+            <xs:element type="aliasesType" name="aliases"/>
+            <xs:element type="codesType" name="codes"/>
+            <xs:element type="relationsType" name="relations"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraVesselRecordDetailType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="flag"/>
+            <xs:element type="xs:string" name="grosTonnage"/>
+            <xs:element type="xs:string" name="owner"/>
+            <xs:element type="xs:string" name="tonnage"/>
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="xs:string" name="callsign"/>
+            <xs:element type="addressesType" name="addresses"/>
+            <xs:element type="identityDocumentsType" name="identityDocuments"/>
+            <xs:element type="countryDetailsType" name="countryDetails"/>
+            <xs:element type="datesDetailsType" name="datesDetails"/>
+            <xs:element type="aliasesType" name="aliases"/>
+            <xs:element type="codesType" name="codes"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraOtherRecordDetailType">
+        <xs:sequence>
+            <xs:element type="aliasesType" name="aliases"/>
+            <xs:element type="xs:string" name="category"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraCountryRecordDetailType">
+        <xs:sequence>
+            <xs:element type="aliasesType" name="aliases"/>
+            <xs:element type="xs:string" name="iso-num"/>
+            <xs:element type="xs:string" name="iso-alpha"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="extraCityRecordDetailType">
+        <xs:sequence>
+            <xs:element type="aliasesType" name="aliases"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- General Information Types -->
+    <xs:complexType name="descriptionsType">
+        <xs:sequence><!--[BNPP] In v3 we don't have any values for this element, please create the category type if u want specific fields -->
+            <xs:element type="xs:string" name="description" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="programsType">
+        <xs:sequence>
+            <xs:element type="programType" name="program" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="aliasesType">
+        <xs:sequence>
+            <xs:element type="aliasType" name="alias" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="sanctionsType">
+        <xs:sequence>
+            <xs:element type="sanctionType" name="sanction" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="sourcesType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="source" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="imagesType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="image" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="programType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="label"/>
+            <!--[IBM] This is an enumeration in V4 (referential), not a free String -->
+            <!--[BNPP] You can add as many values as u want to fit with your db or let this field as free string and pick the enum or default value at import -->
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="xs:string" name="description"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="aliasType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="referenceAliasReglissV3" minOccurs="0" />
+            <xs:element type="xs:string" name="title"/>
+            <xs:element type="xs:string" name="suffix" minOccurs="0"/>
+            <xs:element type="xs:string" name="firstName"/>
+            <xs:element type="xs:string" name="middleName"/>
+            <xs:element type="xs:string" name="lastName"/>
+            <!--[IBM] This is an enumeration in V4 (referential), not a free String -->
+            <!--[BNPP] You can add as many values as u want to fit with your db or let this field as free string and pick the enum or default value at import -->
+            <xs:element type="xs:string" name="quality"/>
+            <!--[IBM] This is an enumeration in V4 (referential), not a free String -->
+            <!--[BNPP] You can add as many values as u want to fit with your db or let this field as free string and pick the enum or default value at import -->
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="xs:string" name="language"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="externalReference" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="sanctionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute type="xs:string" name="endDate" use="optional"/>
+                <xs:attribute type="xs:string" name="sinceDate" use="optional"/>
+                <xs:attribute type="xs:string" name="code" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Extra Individual Record Details Types -->
+    <xs:complexType name="addressesType">
+        <xs:sequence>
+            <xs:element type="addressType" name="address" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="identityDocumentsType">
+        <xs:sequence>
+            <xs:element type="documentType" name="document" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="countryDetailsType">
+        <xs:sequence>
+            <xs:element type="countryType" name="country" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="datesDetailsType">
+        <xs:sequence>
+            <xs:element type="dateType" name="date" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="functionsType">
+        <xs:sequence>
+            <xs:element type="functionType" name="function" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="codesType">
+        <xs:sequence>
+            <xs:element type="codeType" name="code" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="relationsType">
+        <xs:sequence>
+            <xs:element type="relationType" name="relation" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="addressType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="referenceAddressReglissV3" minOccurs="0" />
+            <xs:element type="xs:string" name="address1"/>
+            <xs:element type="xs:string" name="address2"/>
+            <xs:element type="xs:string" name="city"/>
+            <xs:element type="xs:string" name="country"/>
+            <xs:element type="xs:string" name="remarks"/>
+            <xs:element type="xs:string" name="state"/>
+            <xs:element type="xs:string" name="zipCode"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="documentType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="xs:string" name="issueDate"/>
+            <xs:element type="xs:string" name="expirationDate"/>
+            <xs:element type="xs:string" name="country"/>
+            <xs:element type="xs:string" name="additionalInfo"/>
+            <xs:element type="xs:string" name="number"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="countryType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="additionalInfo"/>
+            <xs:element type="xs:string" name="country"/>
+            <xs:element type="xs:boolean" name="principal" minOccurs="0"/>
+            <xs:element type="xs:string" name="type"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="dateType">
+        <xs:sequence>
+            <xs:element type="xs:boolean" name="isPrimary" minOccurs="0"/>
+            <xs:element type="xs:string" name="type"/>
+            <xs:element type="xs:string" name="dateValue"/>
+            <xs:element type="xs:string" name="placeValue"/>
+            <xs:element type="xs:string" name="country"/>
+            <xs:element type="xs:string" name="dateAdditionalInfo"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="functionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="current" use="optional"/>
+                <xs:attribute type="xs:string" name="details" use="optional"/>
+                <xs:attribute type="xs:string" name="category" use="optional"/>
+                <xs:attribute type="xs:string" name="from" use="optional"/>
+                <xs:attribute name="id" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="100"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute type="xs:string" name="to" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="codeType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="value"/>
+            <xs:element name="type">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="BIC"/>
+                        <xs:enumeration value="IBAN"/>
+                        <xs:enumeration value="IMO"/>
+                        <xs:enumeration value="ISIN"/>
+                        <xs:enumeration value="CUSIP"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="relationType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="category"/>
+            <xs:element type="xs:boolean" name="ex" minOccurs="0" nillable="true"/>
+            <xs:element type="xs:string" name="name"/>
+            <xs:element type="xs:string" name="relationType"/>
+            <xs:element type="xs:string" name="type"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="100"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

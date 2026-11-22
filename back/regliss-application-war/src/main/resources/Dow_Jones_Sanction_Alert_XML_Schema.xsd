@@ -1,0 +1,1671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Dow Jones Risk & Compliance Sanction Alert -->
+<!-- © 2010 Factiva, Inc. All rights reserved.-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="DowJonesSanctionAlert">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CountryTypeList"/>
+                <xs:element ref="CountryList"/>
+                <xs:element ref="Description1List"/>
+                <xs:element ref="Description2List"/>
+                <xs:element ref="Description3List"/>
+                <xs:element ref="ReferenceGroupList"/>
+                <xs:element ref="SanctionsReferencesList"/>
+                <xs:element ref="IdentificationTypeList"/>
+                <xs:element ref="DateTypeList"/>
+                <xs:element ref="ReferenceGroupLanguagesList"/>
+                <xs:element ref="ScriptLanguageList"/>
+                <xs:element ref="RelationshipList" minOccurs="0"/>
+                <xs:element ref="Records"/>
+                <xs:element ref="Associations" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="type" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                        <xs:maxLength value="11"/>
+                        <xs:enumeration value="incremental"/>
+                        <xs:enumeration value="full"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="date" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="12"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="ContentRestriction">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NameContentRestriction">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="2500"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ProfileNotesContentRestriction">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="CountryContentRestriction">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="40"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="GenderContentRestriction">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:maxLength value="7"/>
+            <xs:enumeration value="Male"/>
+            <xs:enumeration value="Female"/>
+            <xs:enumeration value="Unknown"/>
+            <xs:enumeration value="Null"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RecordstatusContentRestriction">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:maxLength value="8"/>
+            <xs:enumeration value="Active"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DeceasedContentRestriction">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:maxLength value="3"/>
+            <xs:enumeration value="Yes"/>
+            <xs:enumeration value="No"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attribute name="fieldaction">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="9"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+    <xs:element name="CountryTypeList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CountryTypeName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryTypeName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="RecordType" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="6"/>
+                                <xs:enumeration value="Entity"/>
+                                <xs:enumeration value="Person"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CountryName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="CountryContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="DJIIRegionCode" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="13"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ISO3CountryCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="3"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ISO2CountryCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="IsTerritory" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="5"/>
+                                <xs:enumeration value="False"/>
+                                <xs:enumeration value="True"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ParentCountryCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description1List">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Description1Name" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description1Name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="Description1Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="RecordType" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="6"/>
+                                <xs:enumeration value="Entity"/>
+                                <xs:enumeration value="Person"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description2List">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Description2Name" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description2Name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="Description2Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Description1Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description3List">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Description3Name" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description3Name">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="Description3Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Description2Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReferenceGroupList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ListGroupName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ListGroupName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="ReferenceGroupCode" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="10"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SanctionsReferencesList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReferenceName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Description2Code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ReferenceGroupCode" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="10"/>
+                                <!--updated-->
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ListProviderName" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="255"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="CountryCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="Status" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="9"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IdentificationTypeList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="IdentificationType" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IdentificationType">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="RecordType" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="6"/>
+                                <xs:enumeration value="Entity"/>
+                                <xs:enumeration value="Person"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateTypeList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="DateTypeName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateTypeName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="RecordType" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="6"/>
+                                <xs:enumeration value="Entity"/>
+                                <xs:enumeration value="Person"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReferenceGroupLanguagesList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroupLanguageName" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReferenceGroupLanguageName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ISO2LanguageCode" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ScriptLanguageList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ScriptLanguage" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ScriptLanguage">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="id" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ScriptLanguageCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RelationshipList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Relationship" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Relationship">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="Relationshipid" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="action" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:maxLength value="9"/>
+                                <xs:enumeration value="add"/>
+                                <xs:enumeration value="chg"/>
+                                <xs:enumeration value="del"/>
+                                <xs:enumeration value="unchg"/>
+                                <xs:enumeration value="rev"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="date" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="12"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Records">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Person" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="Entity" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Person">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="GenderDetails" minOccurs="0"/>
+                <xs:element ref="ActiveStatusDetails" minOccurs="0"/>
+                <xs:element ref="DeceasedDetails" minOccurs="0"/>
+                <xs:element ref="PersonNameDetails" minOccurs="0"/>
+                <xs:element ref="Descriptions"/>
+                <xs:element ref="DateDetails" minOccurs="0"/>
+                <xs:element ref="BirthPlaceDetails" minOccurs="0"/>
+                <xs:element ref="SanctionsReferences" minOccurs="0"/>
+                <xs:element ref="AddressDetails" minOccurs="0"/>
+                <xs:element ref="CountryDetails" minOccurs="0"/>
+                <xs:element ref="IdentificationDetails" minOccurs="0"/>
+                <xs:element ref="SourceDetails" minOccurs="0"/>
+                <xs:element ref="ProfileNotes" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="date" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="12"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="recordaction" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                        <xs:maxLength value="9"/>
+                        <xs:enumeration value="add"/>
+                        <xs:enumeration value="chg"/>
+                        <xs:enumeration value="del"/>
+                        <xs:enumeration value="rev"/>
+                        <xs:enumeration value="unchg"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GenderDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Gender" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Gender">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="GenderValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GenderValue">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="GenderContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ActiveStatusDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ActiveStatus" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ActiveStatus">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="ActiveStatusValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ActiveStatusValue">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="RecordstatusContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DeceasedDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Deceased" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Deceased">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="DeceasedValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DeceasedValue">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="DeceasedContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PersonNameDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="PersonNames" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PersonNames">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" maxOccurs="unbounded"/>
+                <xs:element ref="PersonNameValue"/>
+                <xs:element ref="NamesGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PersonNameValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="OriginalScriptName" minOccurs="0"/>
+                <xs:element ref="SingleStringName" minOccurs="0"/>
+                <xs:element ref="MaidenName" minOccurs="0"/>
+                <xs:element ref="TitleHonorific" minOccurs="0"/>
+                <xs:element ref="FirstName" minOccurs="0"/>
+                <xs:element ref="MiddleName" minOccurs="0"/>
+                <xs:element ref="Surname" minOccurs="0"/>
+                <xs:element ref="Suffix" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="NamesGroup">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="PersonNames" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="EntityNames" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="EntityName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="OriginalScriptName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute name="OSNLanguageCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="5"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                    <xs:attribute name="ScriptLanguageCode" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SingleStringName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MaidenName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TitleHonorific">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="FirstName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MiddleName">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Surname">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NameContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Suffix">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Prefix">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Descriptions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Description" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Description">
+        <xs:complexType>
+            <xs:attribute ref="fieldaction" use="optional"/>
+            <xs:attribute name="Description1" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Description2" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Description3" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="DateType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateType">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="DateTypeValue" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="code" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateTypeValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="DateValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DateValue">
+        <xs:complexType>
+            <xs:attribute ref="fieldaction" use="optional"/>
+            <xs:attribute name="Day" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="2"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Month" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Year" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="DateNotes" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="255"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BirthPlaceDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="BirthPlace" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BirthPlace">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="PlaceValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PlaceValue">
+        <xs:complexType>
+            <xs:attribute name="name" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="1000"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="County" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="255"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="State" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="255"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="RegionCode" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SanctionsReferences">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Reference" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Reference">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="ReferenceValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReferenceValue">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="SinceDay" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="SinceMonth" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="3"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="SinceYear" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ToDay" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="2"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ToMonth" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="3"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="ToYear" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AddressDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Address" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Address">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="AddressValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AddressValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="AddressLine" minOccurs="0"/>
+                <xs:element ref="AddressCity" minOccurs="0"/>
+                <xs:element ref="AddressCounty" minOccurs="0"/>
+                <xs:element ref="AddressState" minOccurs="0"/>
+                <xs:element ref="ZipCode" minOccurs="0"/>
+                <xs:element ref="AddressCountry" minOccurs="0"/>
+                <xs:element ref="URL" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AddressLine">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AddressCity">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AddressCounty">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AddressState">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ZipCode">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="50"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AddressCountry">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="3"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="URL">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="CountryDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CountryType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryType">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CountryTypeValue" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="code" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryTypeValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="CountryValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CountryValue">
+        <xs:complexType>
+            <xs:attribute name="code" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IdentificationDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="IDType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IDType">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="IDTypeValue" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="code" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IDTypeValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="IDValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="IDValue">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ContentRestriction">
+                    <xs:attribute name="IDNotes" use="optional"/>
+                    <xs:attribute ref="fieldaction" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SourceDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Source" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Source">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="SourceValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SourceValue">
+        <xs:complexType>
+            <xs:attribute name="name" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="255"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ProfileNotes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ProfileNote" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ProfileNote">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="ProfileNoteValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ProfileNoteValue">
+        <xs:simpleType>
+            <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Entity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ActiveStatusDetails" minOccurs="0"/>
+                <xs:element ref="EntityNameDetails" minOccurs="0"/>
+                <xs:element ref="Descriptions"/>
+                <xs:element ref="DateDetails" minOccurs="0"/>
+                <xs:element ref="SanctionsReferences" minOccurs="0"/>
+                <xs:element ref="AddressDetails" minOccurs="0"/>
+                <xs:element ref="VesselDetails" minOccurs="0"/>
+                <xs:element ref="AircraftDetails" minOccurs="0"/>
+                <xs:element ref="CountryDetails" minOccurs="0"/>
+                <xs:element ref="IdentificationDetails" minOccurs="0"/>
+                <xs:element ref="SourceDetails" minOccurs="0"/>
+                <xs:element ref="ProfileNotes" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="recordaction" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                        <xs:maxLength value="9"/>
+                        <xs:enumeration value="add"/>
+                        <xs:enumeration value="chg"/>
+                        <xs:enumeration value="del"/>
+                        <xs:enumeration value="rev"/>
+                        <xs:enumeration value="unchg"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="date" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="12"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="EntityNameDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="EntityNames" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="EntityNames">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" maxOccurs="unbounded"/>
+                <xs:element ref="EntityNameValue"/>
+                <xs:element ref="NamesGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="EntityNameValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Prefix" minOccurs="0"/>
+                <xs:element ref="EntityName" minOccurs="0"/>
+                <xs:element ref="OriginalScriptName" minOccurs="0"/>
+                <xs:element ref="SingleStringName" minOccurs="0"/>
+                <xs:element ref="Suffix" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VesselDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Vessels" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Vessels">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="VesselInformation" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VesselInformation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="VesselCallSign" minOccurs="0"/>
+                <xs:element ref="VesselType" minOccurs="0"/>
+                <xs:element ref="VesselTonnage" minOccurs="0"/>
+                <xs:element ref="VesselGRT" minOccurs="0"/>
+                <xs:element ref="VesselOwner" minOccurs="0"/>
+                <xs:element ref="VesselFlag" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="VesselCallSign">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="VesselType">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="VesselTonnage">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="VesselGRT">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="VesselOwner">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="255"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="VesselFlag">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="3"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AircraftDetails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Aircrafts" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Aircrafts">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="AircraftInformation" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AircraftInformation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="AircraftManufactureDate" minOccurs="0"/>
+                <xs:element ref="AircraftModel" minOccurs="0"/>
+                <xs:element ref="AircraftOperator" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="fieldaction" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="5"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AircraftManufactureDate">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="11"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AircraftModel">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="500"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="AircraftOperator">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="500"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ReferenceGroup">
+        <xs:complexType>
+            <xs:attribute name="ReferenceGroupCode" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="ReferenceGroupLanguageCode" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="2"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Associations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Profile" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Profile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Associate" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Associate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="AssociationValue" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="AssociationValue">
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="Description1Code" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Description2Code" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Description3Code" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="RelationshipId" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="ex" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                        <xs:maxLength value="3"/>
+                        <xs:enumeration value="Yes"/>
+                        <xs:enumeration value="No"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute ref="fieldaction" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

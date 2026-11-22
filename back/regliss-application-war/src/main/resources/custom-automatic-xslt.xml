@@ -1,0 +1,867 @@
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0" xmlns:ref="xalan://com.bnpp.regliss.importer.dj.XsltApi">
+
+    <xsl:variable name="ref" select="ref:getInstanceFromSpring('CUSTOM')"/>
+    <xsl:variable name="programCodes" select="'9 10 11 12 13 14 27 28 29 30 31 32 33 34 35 36 38'"/>
+    <xsl:variable name="bicCodes" select="'15'"/>
+
+    <xsl:template match="record[contains(generalInformation/type,'Individual')]">
+        <root>
+            <PERSON>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+
+                <xsl:call-template name="PRINT_DESCRIPTION"/>
+                <xsl:call-template name="PRINT_INSTRUCTION"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_INDIVIDUAL_INFORMATION"/>
+                <xsl:call-template name="PRINT_ADDRESSES">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_SANCTIONS"/>
+                <xsl:call-template name="PRINT_IMAGE"/>
+                <xsl:call-template name="PRINT_ALIASES">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_SOURCES"/>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_FUNCTION"/>
+                <xsl:call-template name="PRINT_PERSON_DATE_DETAILS"/>
+                <xsl:call-template name="PRINT_RECORD_COUNTRY_DETAIL">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_CODES">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_RELATIONS">
+                    <xsl:with-param name="root" select="extraIndividualRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+
+            </PERSON>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="record[contains(generalInformation/type,'Entity')]">
+        <root>
+            <ENTITY>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_DESCRIPTION"/>
+                <xsl:call-template name="PRINT_INSTRUCTION"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <xsl:call-template name="PRINT_SOURCES"/>
+                <xsl:call-template name="PRINT_ALIASES">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_RECORD_COUNTRY_DETAIL">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_SANCTIONS"/>
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_CODES">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_ADDRESSES">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_RELATIONS">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_RECORD_DATE_DETAILS">
+                    <xsl:with-param name="root" select="extraEntityRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </ENTITY>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="record[contains(generalInformation/type,'Vessel')]">
+        <root>
+            <VESSEL>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_DESCRIPTION"/>
+                <xsl:call-template name="PRINT_INSTRUCTION"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <xsl:call-template name="PRINT_SOURCES"/>
+                <xsl:call-template name="PRINT_SANCTIONS"/>
+                <xsl:call-template name="PRINT_ALIASES">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_RECORD_COUNTRY_DETAIL">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_IDENTITY_DOCUMENTS">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_CODES">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_ADDRESSES">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_VESSEL_INFORMATION"/>
+                <xsl:call-template name="PRINT_RECORD_DATE_DETAILS">
+                    <xsl:with-param name="root" select="extraVesselRecordDetail"/>
+                </xsl:call-template>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </VESSEL>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="record[contains(generalInformation/type,'Country')]">
+        <root>
+            <COUNTRY>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+                <xsl:call-template name="PRINT_EXTRA_COUNTRY_DETAIL"/>
+                <COUNTRY_SEARCH_CODE>
+                    <xsl:call-template name="PRINT_SEARCH_CODE">
+                        <xsl:with-param name="root" select="generalInformation"/>
+                    </xsl:call-template>
+                </COUNTRY_SEARCH_CODE>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </COUNTRY>
+        </root>
+    </xsl:template>
+
+
+    <xsl:template match="record[contains(generalInformation/type,'City')]">
+        <root>
+            <CITY>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+                <xsl:call-template name="PRINT_ALIASES">
+                    <xsl:with-param name="root" select="extraCityRecordDetail"/>
+                </xsl:call-template>
+
+                <CITY_SEARCH_CODE>
+                    <xsl:call-template name="PRINT_SEARCH_CODE">
+                        <xsl:with-param name="root" select="generalInformation"/>
+                    </xsl:call-template>
+                </CITY_SEARCH_CODE>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </CITY>
+        </root>
+    </xsl:template>
+
+    <xsl:template match="record[contains(generalInformation/type,'Seaport')]">
+        <root>
+            <SEAPORT>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+
+                <SEAPORT_SEARCH_CODE>
+                    <xsl:call-template name="PRINT_SEARCH_CODE">
+                        <xsl:with-param name="root" select="generalInformation"/>
+                    </xsl:call-template>
+                </SEAPORT_SEARCH_CODE>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </SEAPORT>
+        </root>
+    </xsl:template>
+    <xsl:template match="record[contains(generalInformation/type,'Airport')]">
+        <root>
+            <AIRPORT>
+                <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+                <xsl:call-template name="PRINT_COMMENTS"/>
+                <xsl:call-template name="PRINT_NOTES"/>
+                <RECORD_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_EXTERNAL_REFERENCE>
+                <RECORD_START_DATE>
+                    <xsl:value-of select="@applicationDate"/>
+                </RECORD_START_DATE>
+
+                <AIRPORT_SEARCH_CODE>
+                    <xsl:call-template name="PRINT_SEARCH_CODE">
+                        <xsl:with-param name="root" select="generalInformation"/>
+                    </xsl:call-template>
+                </AIRPORT_SEARCH_CODE>
+                <xsl:call-template name="PRINT_V3_INFORMATION"/>
+                <xsl:call-template name="PRINT_PROGRAMS"/>
+                <xsl:call-template name="PRINT_KEYWORDS"/>
+            </AIRPORT>
+        </root>
+    </xsl:template>
+    <xsl:template match="record[contains(generalInformation/type,'Other')]">
+    <root>
+        <OTHER>
+            <xsl:call-template name="PRINT_FULL_NAME_RECORD"/>
+            <xsl:call-template name="PRINT_COMMENTS"/>
+            <xsl:call-template name="PRINT_NOTES"/>
+            <RECORD_EXTERNAL_REFERENCE>
+                <xsl:value-of select="@externalReference"/>
+            </RECORD_EXTERNAL_REFERENCE>
+            <RECORD_START_DATE>
+                <xsl:value-of select="@applicationDate"/>
+            </RECORD_START_DATE>
+            <xsl:call-template name="PRINT_EXTRA_OTHER_DETAIL"/>
+            <OTHER_SEARCH_CODE>
+                <xsl:call-template name="PRINT_SEARCH_CODE">
+                    <xsl:with-param name="root" select="generalInformation"/>
+                </xsl:call-template>
+            </OTHER_SEARCH_CODE>
+            <xsl:call-template name="PRINT_V3_INFORMATION"/>
+            <xsl:call-template name="PRINT_PROGRAMS"/>
+            <xsl:call-template name="PRINT_KEYWORDS"/>
+        </OTHER>
+    </root>
+    </xsl:template>
+    <xsl:template name="PRINT_FULL_NAME_RECORD">
+        <RECORD_NAME>
+            <xsl:value-of select="generalInformation/fullName"/>
+        </RECORD_NAME>
+    </xsl:template>
+
+    <xsl:template name="PRINT_PROGRAMS">
+        <xsl:if test="generalInformation/programs !=''">
+            <xsl:for-each select="generalInformation/programs/program">
+
+                <xsl:variable name="programType"
+                              select="ref:resolveRefInDbByLabelAllowEmpty($ref, 'PROGRAM_SANCTION_TYPE', type)"/>
+
+                <PROGRAM>
+                    <RECORD_PROGRAM_SANCTION_TYPE>
+                        <xsl:value-of select="$programType"/>
+                    </RECORD_PROGRAM_SANCTION_TYPE>
+                    <RECORD_PROGRAM_LABEL>
+                        <xsl:value-of select="label"/>
+                    </RECORD_PROGRAM_LABEL>
+                    <RECORD_PROGRAM_DESCRIPTION>
+                        <xsl:value-of select="substring(description, 1, 2048)"/>
+                    </RECORD_PROGRAM_DESCRIPTION>
+                    <RECORD_PROGRAM_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_PROGRAM_GIVEN_ID>
+                </PROGRAM>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="PRINT_DESCRIPTION">
+
+        <RECORD_DESCRIPTION>
+            <xsl:value-of select="generalInformation/description"/>
+        </RECORD_DESCRIPTION>
+    </xsl:template>
+    <xsl:template name="PRINT_INSTRUCTION">
+        <xsl:if test="generalInformation/instruction != ''">
+            <RECORD_INSTRUCTION>
+                <xsl:value-of select="generalInformation/instruction"/>
+            </RECORD_INSTRUCTION>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="PRINT_COMMENTS">
+        <xsl:if test="generalInformation/comments != ''">
+            <RECORD_COMMENTS>
+                <xsl:value-of select="generalInformation/comments"/>
+            </RECORD_COMMENTS>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="PRINT_INDIVIDUAL_INFORMATION">
+
+        <xsl:call-template name="PRINT_GENDER"/>
+        <xsl:call-template name="PRINT_LAST_NAME"/>
+        <xsl:call-template name="PRINT_MIDDLE_NAME"/>
+        <xsl:call-template name="PRINT_FIRST_NAME"/>
+        <xsl:call-template name="PRINT_SUFFIX"/>
+        <xsl:call-template name="PRINT_MAIDEN_NAME"/>
+        <xsl:call-template name="PRINT_TITLE"/>
+        <xsl:call-template name="PRINT_IS_DECEASED"/>
+
+
+    </xsl:template>
+    <xsl:template name="PRINT_GENDER">
+        <xsl:variable name="gender" select="extraIndividualRecordDetail/gender"/>
+        <PERSON_GENDER>
+            <xsl:value-of
+                    select="ref:resolveRefInDbByLabel($ref, 'GENDER', $gender)"/>
+        </PERSON_GENDER>
+    </xsl:template>
+    <xsl:template name="PRINT_LAST_NAME">
+
+        <PERSON_LAST_NAME>
+            <xsl:value-of select="extraIndividualRecordDetail/lastName"/>
+        </PERSON_LAST_NAME>
+    </xsl:template>
+    <xsl:template name="PRINT_MAIDEN_NAME">
+
+        <PERSON_MAIDEN_NAME>
+            <xsl:value-of select="extraIndividualRecordDetail/maidenName"/>
+        </PERSON_MAIDEN_NAME>
+    </xsl:template>
+    <xsl:template name="PRINT_MIDDLE_NAME">
+
+        <PERSON_MIDDLE_NAME>
+            <xsl:value-of select="extraIndividualRecordDetail/middleName"/>
+        </PERSON_MIDDLE_NAME>
+    </xsl:template>
+    <xsl:template name="PRINT_FIRST_NAME">
+
+        <PERSON_FIRST_NAME>
+            <xsl:value-of select="extraIndividualRecordDetail/firstname"/>
+        </PERSON_FIRST_NAME>
+    </xsl:template>
+    <xsl:template name="PRINT_SUFFIX">
+
+        <PERSON_SUFFIX>
+            <xsl:value-of select="extraIndividualRecordDetail/suffix"/>
+        </PERSON_SUFFIX>
+    </xsl:template>
+
+    <xsl:template name="PRINT_TITLE">
+
+        <PERSON_TITLE>
+            <xsl:value-of select="extraIndividualRecordDetail/title"/>
+        </PERSON_TITLE>
+    </xsl:template>
+
+    <xsl:template name="PRINT_IS_DECEASED">
+
+        <PERSON_IS_DECEASED>
+            <xsl:value-of select="ref:toBoolean($ref,extraIndividualRecordDetail/isDeceased)"/>
+        </PERSON_IS_DECEASED>
+
+    </xsl:template>
+
+    <xsl:template name="PRINT_ADDRESSES">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/addresses != ''">
+            <xsl:for-each select="$root/addresses/address">
+                <ADDRESS>
+                    <RECORD_ADDRESS_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_ADDRESS_GIVEN_ID>
+                    <RECORD_ADDRESS_REGLISS_REFERENCE>
+                        <xsl:value-of select="referenceAddressReglissV3"/>
+                    </RECORD_ADDRESS_REGLISS_REFERENCE>
+
+                    <RECORD_ADDRESS_ADDRESS>
+                        <xsl:value-of select="address1"/>
+                    </RECORD_ADDRESS_ADDRESS>
+                    <RECORD_ADDRESS_CITY>
+                        <xsl:value-of select="city"/>
+                    </RECORD_ADDRESS_CITY>
+                    <RECORD_ADDRESS_STATE>
+                        <xsl:value-of select="state"/>
+                    </RECORD_ADDRESS_STATE>
+                    <RECORD_ADDRESS_ZIP_CODE>
+                        <xsl:value-of select="zipCode"/>
+                    </RECORD_ADDRESS_ZIP_CODE>
+                    <RECORD_ADDRESS_REMARKS>
+                        <xsl:value-of select="remarks"/>
+                    </RECORD_ADDRESS_REMARKS>
+                    <RECORD_ADDRESS_ADDITIONAL_ADDRESS>
+                        <xsl:value-of select="address2"/>
+                    </RECORD_ADDRESS_ADDITIONAL_ADDRESS>
+                    <RECORD_ADDRESS_COUNTRY>
+                        <xsl:value-of select="ref:resolveRefInDbByLabelAllowEmpty($ref, 'COUNTRY', country)"/>
+                    </RECORD_ADDRESS_COUNTRY>
+                </ADDRESS>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_IDENTITY_DOCUMENTS">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/identityDocuments">
+            <xsl:for-each select="$root/identityDocuments/document">
+
+                <xsl:variable name="identityDocumentType"
+                              select="ref:resolveRefInDbByLabel($ref, 'IDENTITY_DOCUMENT_TYPE', type)"/>
+                <xsl:variable name="country" select="ref:resolveRefInDbByLabel($ref, 'COUNTRY', country)"/>
+                <IDENTITY>
+                    <RECORD_IDENTITY_DOCUMENT_TYPE>
+                        <xsl:value-of select="$identityDocumentType"/>
+                    </RECORD_IDENTITY_DOCUMENT_TYPE>
+                    <RECORD_IDENTITY_DOCUMENT_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_IDENTITY_DOCUMENT_GIVEN_ID>
+                    <RECORD_IDENTITY_DOCUMENT_NUMBER>
+                        <xsl:value-of select="number"/>
+                    </RECORD_IDENTITY_DOCUMENT_NUMBER>
+                    <RECORD_IDENTITY_DOCUMENT_ISSUING_DATE>
+                        <xsl:value-of select="issueDate"/>
+                    </RECORD_IDENTITY_DOCUMENT_ISSUING_DATE>
+                    <RECORD_IDENTITY_DOCUMENT_EXPIRATION_DATE>
+                        <xsl:value-of select="expirationDate"/>
+                    </RECORD_IDENTITY_DOCUMENT_EXPIRATION_DATE>
+                    <RECORD_IDENTITY_DOCUMENT_COUNTRY>
+                        <xsl:value-of select="$country"/>
+                    </RECORD_IDENTITY_DOCUMENT_COUNTRY>
+                    <RECORD_IDENTITY_DOCUMENT_ADDITIONAL_INFO>
+                        <xsl:value-of select="additionalInfo"/>
+                    </RECORD_IDENTITY_DOCUMENT_ADDITIONAL_INFO>
+                </IDENTITY>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_PERSON_DATE_DETAILS">
+        <xsl:for-each
+                select="extraIndividualRecordDetail/datesDetails/date">
+            <xsl:variable name="isPersonBiography" select="ref:isPersonBiografy($ref,type)"/>
+            <xsl:if test="$isPersonBiography ='1'">
+            <PERSON_BIOGRAPHY>
+                <RECORD_PERSON_BIOGRAPHY_GIVEN_ID>
+                    <xsl:value-of select="@id"/>
+                </RECORD_PERSON_BIOGRAPHY_GIVEN_ID>
+                <RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                    <xsl:value-of select="dateValue"/>
+                </RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                <RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                    <xsl:value-of select="dateAdditionalInfo"/>
+                </RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                <RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+                    <xsl:value-of select="ref:resolveRefInDbByLabel($ref, 'DATE_TYPE', type)"/>
+                </RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+                <RECORD_PERSON_BIOGRAPHY_BIRTH_PLACE>
+                    <xsl:value-of select="placeValue"/>
+                </RECORD_PERSON_BIOGRAPHY_BIRTH_PLACE>
+                <RECORD_PERSON_BIOGRAPHY_IS_PRIMARY>
+                    <xsl:value-of select="ref:toBoolean($ref,isPrimary)"/>
+                </RECORD_PERSON_BIOGRAPHY_IS_PRIMARY>
+                <RECORD_PERSON_BIOGRAPHY_BIRTH_COUNTRY>
+                    <xsl:value-of select="ref:resolveRefInDbByLabelAllowEmpty($ref, 'COUNTRY', country)"/>
+                </RECORD_PERSON_BIOGRAPHY_BIRTH_COUNTRY>
+            </PERSON_BIOGRAPHY>
+
+            </xsl:if>
+
+            <xsl:if test="$isPersonBiography ='2'">
+                <PERSON_BIOGRAPHY>
+                    <RECORD_PERSON_BIOGRAPHY_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_PERSON_BIOGRAPHY_GIVEN_ID>
+                    <RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                        <xsl:value-of select="dateValue"/>
+                    </RECORD_PERSON_BIOGRAPHY_DATE_VALUE>
+                    <RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                        <xsl:value-of select="dateAdditionalInfo"/>
+                    </RECORD_PERSON_BIOGRAPHY_ADDITIONAL_INFO>
+                    <RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+                        <xsl:value-of select="ref:resolveRefInDbByLabel($ref, 'DATE_TYPE', type)"/>
+                    </RECORD_PERSON_BIOGRAPHY_DATE_TYPE>
+                    <RECORD_PERSON_BIOGRAPHY_IS_PRIMARY>
+                        <xsl:value-of select="ref:toBoolean($ref,isPrimary)"/>
+                    </RECORD_PERSON_BIOGRAPHY_IS_PRIMARY>
+
+                </PERSON_BIOGRAPHY>
+
+            </xsl:if>
+
+            <xsl:if test="$isPersonBiography ='0'">
+                <DATE_DETAILS>
+                    <RECORD_DATE_DETAILS_DATE_VALUE>
+                        <xsl:value-of
+                                select="dateValue" />
+                    </RECORD_DATE_DETAILS_DATE_VALUE>
+                    <RECORD_DATE_DETAILS_DATE_TYPE>
+                        <xsl:value-of
+                                select="ref:resolveRefInDbByLabel($ref, 'DATE_TYPE', type)" />
+                    </RECORD_DATE_DETAILS_DATE_TYPE>
+                    <RECORD_DATE_DETAILS_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_DATE_DETAILS_GIVEN_ID>
+                </DATE_DETAILS>
+            </xsl:if>
+
+
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_FUNCTION">
+        <xsl:if test="extraIndividualRecordDetail/functions !=''">
+        <xsl:for-each select="extraIndividualRecordDetail/functions/function">
+
+            <FUNCTION>
+                <PERSON_FUNCTION_GIVEN_ID>
+                    <xsl:value-of select="@id"/>
+                </PERSON_FUNCTION_GIVEN_ID>
+                <PERSON_FUNCTION_NAME>
+                    <xsl:value-of
+                            select="."/>
+                </PERSON_FUNCTION_NAME>
+                <PERSON_FUNCTION_CATEGORY>
+                    <xsl:value-of
+                            select="ref:resolveRefInDbByLabel($ref, 'PEP_OCCUPATION_CATEGORY', @category)"/>
+                </PERSON_FUNCTION_CATEGORY>
+
+                <PERSON_FUNCTION_FROM_DATE>
+                    <xsl:value-of
+                            select="@from"/>
+                </PERSON_FUNCTION_FROM_DATE>
+                <PERSON_FUNCTION_TO_DATE>
+                    <xsl:value-of
+                            select="@to"/>
+                </PERSON_FUNCTION_TO_DATE>
+            </FUNCTION>
+
+        </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_SANCTIONS">
+        <xsl:if test="generalInformation/sanctions !=''">
+        <xsl:for-each select="generalInformation/sanctions/sanction">
+            <SANCTION_REFERENCE>
+                <RECORD_SANCTION_REFERENCE_GIVEN_ID>
+                    <xsl:value-of select="@id"/>
+                </RECORD_SANCTION_REFERENCE_GIVEN_ID>
+                <RECORD_SANCTION_REFERENCE_LIST_NAME>
+                    <xsl:value-of select="."/>
+                </RECORD_SANCTION_REFERENCE_LIST_NAME>
+                <RECORD_SANCTION_REFERENCE_SINCE_DATE>
+                    <xsl:value-of select="@sinceDate"/>
+                </RECORD_SANCTION_REFERENCE_SINCE_DATE>
+                <RECORD_SANCTION_REFERENCE_END_DATE>
+                    <xsl:value-of select="@endDate"/>
+                </RECORD_SANCTION_REFERENCE_END_DATE>
+                <RECORD_SANCTION_REFERENCE_CODE>
+                    <xsl:value-of select="@code"/>
+                </RECORD_SANCTION_REFERENCE_CODE>
+            </SANCTION_REFERENCE>
+        </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_CODES">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/codes">
+            <xsl:for-each select="$root/codes/code">
+                <xsl:variable name="codeType" select="ref:tranformInLowerCase($ref,type)"/>
+                <xsl:if test="$codeType ='iban'">
+                    <IBAN>
+                        <IBAN_VALUE>
+                            <xsl:value-of select="value"/>
+                        </IBAN_VALUE>
+                        <IBAN_GIVEN_ID>
+                            <xsl:value-of select="@id"/>
+                        </IBAN_GIVEN_ID>
+                    </IBAN>
+                </xsl:if>
+
+                <xsl:if test="$codeType ='bic'">
+                    <BIC>
+                        <BIC_VALUE>
+                            <xsl:value-of select="value"/>
+                        </BIC_VALUE>
+                        <BIC_GIVEN_ID>
+                            <xsl:value-of select="@id"/>
+                        </BIC_GIVEN_ID>
+                    </BIC>
+                </xsl:if>
+                <xsl:if test="$codeType='isin'">
+                    <ISIN>
+                        <ISIN_VALUE>
+                            <xsl:value-of select="value" />
+                        </ISIN_VALUE>
+                    </ISIN>
+                </xsl:if>
+                <xsl:if test="$codeType='cusip'">
+                    <CUSIP>
+                        <CUSIP_VALUE>
+                            <xsl:value-of select="value" />
+                        </CUSIP_VALUE>
+                    </CUSIP>
+                </xsl:if>
+                <xsl:if test="$codeType='imo'">
+                    <VESSEL_IMO>
+                        <xsl:value-of select="value"/>
+                    </VESSEL_IMO>
+                </xsl:if>
+
+            </xsl:for-each>
+
+        </xsl:if>
+
+
+    </xsl:template>
+    <xsl:template name="PRINT_IMAGE">
+        <xsl:for-each select="extraIndividualRecordDetail/images/image">
+            <IMAGE>
+                <PERSON_IMAGE_URL>
+                    <xsl:value-of select="."/>
+                </PERSON_IMAGE_URL>
+            </IMAGE>
+        </xsl:for-each>
+    </xsl:template>
+    <xsl:template name="PRINT_NOTES">
+        <xsl:if test="generalInformation/notes != ''">
+            <RECORD_DOW_JONES_NOTES>
+                <xsl:value-of select="generalInformation/notes"/>
+            </RECORD_DOW_JONES_NOTES>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_ALIASES">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/aliases !=''">
+        <xsl:for-each select="$root/aliases/alias">
+            <ALIAS>
+                <RECORD_ALIAS_FIRST_NAME>
+                    <xsl:value-of select="firstName"/>
+                </RECORD_ALIAS_FIRST_NAME>
+                <RECORD_ALIAS_MIDDLE_NAME>
+                    <xsl:value-of select="middleName"/>
+                </RECORD_ALIAS_MIDDLE_NAME>
+                <RECORD_ALIAS_LAST_NAME>
+                    <xsl:value-of select="lastName"/>
+                </RECORD_ALIAS_LAST_NAME>
+                <RECORD_ALIAS_LANGUAGE>
+                    <xsl:value-of select="language"/>
+                </RECORD_ALIAS_LANGUAGE>
+                <RECORD_ALIAS_TITLE>
+                    <xsl:value-of select="title"/>
+                </RECORD_ALIAS_TITLE>
+                <RECORD_ALIAS_SUFFIX>
+                    <xsl:value-of select="suffix"/>
+                </RECORD_ALIAS_SUFFIX>
+                <RECORD_ALIAS_QUALITY>
+                    <xsl:value-of select="ref:resolveAliasQuality($ref, quality)"/>
+                </RECORD_ALIAS_QUALITY>
+                <RECORD_ALIAS_TYPE>
+                    <xsl:value-of select="ref:resolveRefInDbByLabel($ref, 'ALIAS_TYPE', type)"/>
+                </RECORD_ALIAS_TYPE>
+                <RECORD_ALIAS_EXTERNAL_REFERENCE>
+                    <xsl:value-of select="@externalReference"/>
+                </RECORD_ALIAS_EXTERNAL_REFERENCE>
+                <RECORD_ALIAS_REGLISS_REFFERENCE>
+                    <xsl:value-of select="referenceAliasReglissV3"/>
+                </RECORD_ALIAS_REGLISS_REFFERENCE>
+                <RECORD_ALIAS_FULL_NAME>
+                    <xsl:value-of select="normalize-space(concat(firstName, ' ', middleName,' ', lastName))"/>
+                </RECORD_ALIAS_FULL_NAME>
+            </ALIAS>
+        </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="PRINT_SOURCES">
+        <xsl:if test="generalInformation/sources != ''">
+            <xsl:for-each select="generalInformation/sources/source">
+                <SOURCE>
+                    <RECORD_SOURCE_NAME>
+                        <xsl:value-of select="."/>
+                    </RECORD_SOURCE_NAME>
+                </SOURCE>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="PRINT_V3_INFORMATION">
+        <xsl:if test="extraMigrationIDRef != ''">
+            <RECORD_ID>
+                <xsl:value-of select="extraMigrationIDRef/recordIdV3"/>
+            </RECORD_ID>
+            <RECORD_REGLISS_REFERENCE>
+                <xsl:value-of select="extraMigrationIDRef/referenceReglissV3"/>
+            </RECORD_REGLISS_REFERENCE>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_VESSEL_INFORMATION">
+        <xsl:variable name="vesselInformation" select="extraVesselRecordDetail"/>
+        <xsl:if test="$vesselInformation != ''">
+
+            <VESSEL_CALL_SIGN>
+                <xsl:value-of select="$vesselInformation/callsign"/>
+            </VESSEL_CALL_SIGN>
+            <VESSEL_TYPE>
+                <xsl:value-of select="$vesselInformation/type"/>
+            </VESSEL_TYPE>
+            <VESSEL_TONNAGE>
+                <xsl:value-of select="$vesselInformation/tonnage"/>
+            </VESSEL_TONNAGE>
+            <VESSEL_GROSS_TONNAGE>
+                <xsl:value-of select="$vesselInformation/grosTonnage"/>
+            </VESSEL_GROSS_TONNAGE>
+            <VESSEL_OWNER>
+                <xsl:value-of select="$vesselInformation/owner"/>
+            </VESSEL_OWNER>
+
+            <VESSEL_FLAG>
+                <xsl:value-of select="$vesselInformation/flag"/>
+            </VESSEL_FLAG>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_SEARCH_CODE">
+        <xsl:param name="root"/>
+
+        <xsl:value-of select="$root/searchCode"/>
+
+    </xsl:template>
+    <xsl:template name="PRINT_EXTRA_OTHER_DETAIL">
+        <OTHER_CATEGORY>
+            <xsl:value-of select="extraOtherRecordDetail/category"/>
+        </OTHER_CATEGORY>
+        <xsl:call-template name="PRINT_ALIASES">
+            <xsl:with-param name="root" select="extraOtherRecordDetail"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template name="PRINT_EXTRA_COUNTRY_DETAIL">
+
+        <xsl:call-template name="PRINT_ALIASES">
+            <xsl:with-param name="root" select="extraCountryRecordDetail"/>
+        </xsl:call-template>
+        <COUNTRY_ISO_NUM>
+            <xsl:value-of select="extraCountryRecordDetail/iso-num"/>
+        </COUNTRY_ISO_NUM>
+
+        <COUNTRY_ISO_ALPHA>
+            <xsl:value-of select="extraCountryRecordDetail/iso-alpha"/>
+        </COUNTRY_ISO_ALPHA>
+    </xsl:template>
+
+    <xsl:template name="PRINT_RECORD_COUNTRY_DETAIL">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/countryDetails!= ''">
+        <xsl:for-each select="$root/countryDetails/country">
+            <xsl:variable name="countryType" select="ref:resolveRefInDbByLabel($ref, 'COUNTRY_TYPE', type)"/>
+            <COUNTRY_DETAILS>
+                <RECORD_COUNTRY_DETAILS_GIVEN_ID>
+                    <xsl:value-of select="@id"/>
+                </RECORD_COUNTRY_DETAILS_GIVEN_ID>
+                <RECORD_COUNTRY_DETAILS_TYPE>
+                    <xsl:value-of select="$countryType"/>
+                </RECORD_COUNTRY_DETAILS_TYPE>
+                <RECORD_COUNTRY_DETAILS_BIRTH_COUNTRY>
+                    <xsl:value-of select="ref:resolveRefInDbByLabelAllowEmpty($ref, 'COUNTRY', country)"/>
+                </RECORD_COUNTRY_DETAILS_BIRTH_COUNTRY>
+                <RECORD_COUNTRY_DETAILS_IS_PRIMARY>
+                    <xsl:value-of select="ref:toBoolean($ref,principal)"/>
+                </RECORD_COUNTRY_DETAILS_IS_PRIMARY>
+                <RECORD_COUNTRY_DETAILS_ADDITIONAL_INFO>
+                    <xsl:value-of select="additionalInfo"/>
+                </RECORD_COUNTRY_DETAILS_ADDITIONAL_INFO>
+            </COUNTRY_DETAILS>
+
+        </xsl:for-each>
+        </xsl:if>
+
+
+    </xsl:template>
+
+    <xsl:template name="PRINT_RELATIONS">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/relations!= ''">
+            <xsl:for-each select="$root/relations/relation">
+
+                <RELATION>
+                    <RECORD_RELATION_GIVEN_ID>
+                        <xsl:value-of select="@id"/>
+                    </RECORD_RELATION_GIVEN_ID>
+                    <RECORD_RELATION_NAME>
+                        <xsl:value-of select="name"/>
+                    </RECORD_RELATION_NAME>
+                    <RECORD_RELATION_CATEGORY>
+                        <xsl:value-of select="ref:resolveRefInDbByLabel($ref, 'RECORD_CATEGORY', category)"/>
+                    </RECORD_RELATION_CATEGORY>
+                    <RECORD_RELATION_EX>
+                        <xsl:value-of select="ref:toBoolean($ref,ex)"/>
+                    </RECORD_RELATION_EX>
+                    <RECORD_RELATION_TYPE>
+                        <xsl:value-of select="ref:resolveRefInDbByLabel($ref, 'RELATION_TYPE', relationType)"/>
+                    </RECORD_RELATION_TYPE>
+                    <RECORD_RELATION_RECORD_TYPE>
+                        <xsl:value-of select="type"/>
+                    </RECORD_RELATION_RECORD_TYPE>
+                </RELATION>
+
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="PRINT_RECORD_DATE_DETAILS">
+        <xsl:param name="root"/>
+        <xsl:for-each
+                select="$root/datesDetails/date">
+            <DATE_DETAILS>
+                <RECORD_DATE_DETAILS_DATE_VALUE>
+                    <xsl:value-of
+                            select="dateValue" />
+                </RECORD_DATE_DETAILS_DATE_VALUE>
+                <RECORD_DATE_DETAILS_DATE_TYPE>
+                    <xsl:value-of
+                            select="ref:resolveRefInDbByLabel($ref, 'DATE_TYPE', type)" />
+                </RECORD_DATE_DETAILS_DATE_TYPE>
+                <RECORD_DATE_DETAILS_GIVEN_ID>
+                    <xsl:value-of select="@id"/>
+                </RECORD_DATE_DETAILS_GIVEN_ID>
+            </DATE_DETAILS>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="PRINT_KEYWORDS">
+        <RECORD_KEYWORDS>
+            <xsl:variable name="keywords">
+                <xsl:for-each select="generalInformation/programs/program/label">
+                    <xsl:variable name="programLabel"
+                                  select="." />
+                    <xsl:value-of select="$programLabel" />
+                    <xsl:if test="$programLabel != '' and position() != last()">
+                        <xsl:value-of select="' '" />
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:variable>
+            <xsl:value-of select="substring($keywords, 1, 256)" /> <!-- if we'll implement a generic truncation method, this substring will
+                be removed -->
+        </RECORD_KEYWORDS>
+    </xsl:template>
+</xsl:stylesheet>
